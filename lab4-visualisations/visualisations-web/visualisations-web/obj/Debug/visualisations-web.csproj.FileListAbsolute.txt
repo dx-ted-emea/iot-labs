@@ -14,6 +14,9 @@ C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bi
 C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\Microsoft.Owin.Host.SystemWeb.xml
 C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\Microsoft.Owin.Security.xml
 C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\Newtonsoft.Json.xml
-C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\obj\Debug\visualisations-web.csprojResolveAssemblyReference.cache
 C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\obj\Debug\visualisations-web.dll
 C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\obj\Debug\visualisations-web.pdb
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\EntityFramework.dll
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\EntityFramework.SqlServer.dll
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\EntityFramework.xml
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\EntityFramework.SqlServer.xml
