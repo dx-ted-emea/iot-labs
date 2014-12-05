@@ -149,3 +149,114 @@ To create the example follow these staps
         </resources>
     </build>```
 
+- Add the following dependencies to pom.xml
+
+	```<dependencies>
+    	<dependency>
+      		<groupId>junit</groupId>
+      		<artifactId>junit</artifactId>
+      		<version>3.8.1</version>
+      		<scope>test</scope>
+    	</dependency>
+      	<dependency>
+          	<groupId>org.apache.storm</groupId>
+          	<artifactId>storm-core</artifactId>
+          	<version>0.9.2-incubating</version>
+          	<!-- keep storm out of the jar-with-dependencies -->
+          <scope>provided</scope>
+     	</dependency>
+      	<dependency>
+          	<groupId>com.microsoft.eventhubs</groupId>
+          	<artifactId>eventhubs-storm-spout</artifactId>
+          	<version>0.9</version>
+	    </dependency>
+	    <dependency>
+	   		<groupId>com.google.code.gson</groupId>
+	        <artifactId>gson</artifactId>
+          	<version>2.2.2</version>
+      	</dependency>
+      	<dependency>
+          	<groupId>com.github.ptgoetz</groupId>
+          	<artifactId>storm-hbase</artifactId>
+          	<version>0.1.2</version>
+      	</dependency>
+      	<dependency>
+          	<groupId>com.netflix.curator</groupId>
+          	<artifactId>curator-framework</artifactId>
+          	<version>1.3.3</version>
+          	<exclusions>
+            	<exclusion>
+                	<groupId>log4j</groupId>
+                  	<artifactId>log4j</artifactId>
+              	</exclusion>
+              	<exclusion>
+                 	<groupId>org.slf4j</groupId>
+                  	<artifactId>slf4j-log4j12</artifactId>
+              	</exclusion>
+          	</exclusions>
+          	<scope>provided</scope>
+      	</dependency>
+      	<dependency>
+          	<groupId>redis.clients</groupId>
+          	<artifactId>jedis</artifactId>
+          	<version>2.1.0</version>
+      	</dependency>
+      	<dependency>
+          	<groupId>org.mockito</groupId>
+          	<artifactId>mockito-all</artifactId>
+          	<version>1.8.4</version>
+     	</dependency>
+      	<dependency>
+          	<groupId>com.microsoft.sqlserver</groupId>
+          	<artifactId>sqljdbc4</artifactId>
+          	<version>4.0</version>
+      	</dependency>
+  	</dependencies>```
+
+- Create a new package 
+
+	```com.hackathon.storm```
+
+- Add a new file ```ParseBolt.java``` and copy the following contents to the file
+
+	```package com.hackathon.storm;
+	import backtype.storm.topology.base.BaseBasicBolt;
+	import backtype.storm.topology.BasicOutputCollector;
+	import backtype.storm.topology.OutputFieldsDeclarer;
+	import backtype.storm.tuple.Tuple;
+	import backtype.storm.tuple.Fields;
+	import backtype.storm.tuple.Values;
+	
+	import com.google.gson.Gson;
+	
+	
+	public class ParseBolt extends BaseBasicBolt  {
+	    @Override
+	    public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
+	        Gson gson = new Gson();
+	        //Should only be one tuple, which is the JSON message from the spout
+	        String value = tuple.getString(0);
+	
+	        //Deal with cases where we get multiple
+	        //EventHub messages in one tuple
+	        String[] arr = value.split("}");
+	        for (String ehm : arr)
+	        {
+	
+	            //Convert it from JSON to an object
+	            Message msg = new Gson().fromJson(ehm.concat("}"),Message.class);
+	
+	            //Pull out the values and emit as a stream
+	            String timestamp = msg.timestamp;
+	            String deviceid = msg.deviceId;
+	            int reading = msg.reading;
+	
+	            basicOutputCollector.emit("energystream", new Values(timestamp, deviceid, reading));
+	        }
+	    }
+
+    	@Override
+    	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
+        outputFieldsDeclarer.declareStream("energystream", 	new Fields("timestamp", "deviceid", "reading"));
+    	}
+	}```
