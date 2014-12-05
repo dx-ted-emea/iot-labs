@@ -222,11 +222,15 @@ To create the example follow these staps
 - 
 - Create a new package 
 
-	```com.hackathon.storm
+```
+	com.hackathon.storm
+
 
 - Add a new file ```ParseBolt.java``` and copy the following contents to the file.  This bolt will receive a JSON message from the Event Hub Spout and extract the values.  This will be placed on the STORM tuple stream for downstream processing.
 
-	```package com.hackathon.storm;
+```	
+	package com.hackathon.storm;
+
 	import backtype.storm.topology.base.BaseBasicBolt;
 	import backtype.storm.topology.BasicOutputCollector;
 	import backtype.storm.topology.OutputFieldsDeclarer;
@@ -269,7 +273,7 @@ To create the example follow these staps
 
 - Create a new file ```AugBolt.java``` and copy in the following code.  This will augment the stream by adding in the current timestamp.
 
-    ```
+```
 	package com.hackathon.storm;
 
 	import backtype.storm.topology.BasicOutputCollector;
@@ -308,7 +312,8 @@ To create the example follow these staps
 
 - Create a new file ```SqlStorageBolt.java``` and copy the following contents.  This will extract the data from the stream and insert a row into a MS SQL Database table.
 
-	```package com.hackathon.storm;
+```
+	package com.hackathon.storm;
     
     import backtype.storm.topology.BasicOutputCollector;
     import backtype.storm.topology.OutputFieldsDeclarer;
@@ -380,10 +385,11 @@ To create the example follow these staps
 
 - Add another file ```RedisStorageBolt.java``` and copy the following contents.  This will add a new key to redis (timestamp) and will populate the value as a JSON string representing the data on the tuple
 
-	```package com.hackathon.storm;
-    
+	```
+	package com.hackathon.storm;
+
     import backtype.storm.topology.BasicOutputCollector;
-    import backtype.storm.topology.OutputFieldsDeclarer;
+	import backtype.storm.topology.OutputFieldsDeclarer;
     import backtype.storm.topology.base.BaseBasicBolt;
     import backtype.storm.tuple.Tuple;
     import com.google.gson.Gson;
@@ -429,7 +435,6 @@ To create the example follow these staps
                 // LOG.error("Bolt execute error: {}", e);
                 basicOutputCollector.reportError(e);
             }
-    
         }
     
         @Override
@@ -437,6 +442,7 @@ To create the example follow these staps
     
         }
 	}
+	
 
 
 
