@@ -1,6 +1,6 @@
-## IoT Smart home Hackathon Lab ##
+# IoT Smart home Hackathon Lab #
 
-### Lab 1 Energy Monitoring ###
+## Lab 1 Energy Monitoring ##
 
 Monitoring Energy is a key objective of the Smart home. In this lab we will take messages from a Smart Home, process them using Cloud resources and provide an interface to visualise these in a web browser.
 
@@ -30,4 +30,8 @@ A successful device on consumer sale can be measured in the millions of shipped 
 
 In order to solve this challenge, Cloud Platform members such as the Azure Event Hub can be used to offer message receipt and onward delivery. 
 
-Furthermore, simply receiving messages is insufficient to meet the challenges of at scale message processing. We instead need to be able to pass these messages onto 
+Furthermore, simply receiving messages is insufficient to meet the challenges of at scale message processing. We instead need to be able to pass these messages onto a processing 
+
+## Following on ##
+
+The results of the message ingestion and processing can be visualised in Lab 4.
