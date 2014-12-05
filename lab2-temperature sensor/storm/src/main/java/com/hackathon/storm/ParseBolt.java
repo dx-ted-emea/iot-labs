@@ -8,9 +8,7 @@ import backtype.storm.tuple.Values;
 
 import com.google.gson.Gson;
 
-/**
- * Created by david on 02/12/14.
- */
+
 public class ParseBolt extends BaseBasicBolt  {
     @Override
     public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
