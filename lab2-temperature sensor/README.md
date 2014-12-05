@@ -1,16 +1,20 @@
 # RIoT Labs #
 ## Energy Monitoring ##
 **Lab 2**
+-
 
 **Energy Monitor**
+-
 
 Arduino Due
 
 **Gateway**
+-
 
 Tessel?
 
 **Event Hub**
+-
 
 Event Hubs is a highly scalable publish-subscribe ingestor that can intake millions of events per second so that you can process and analyse the massive amounts of data produced by your connected devices and applications. Once collected into Event Hubs, you can transform and store data using any real-time analytics provider or with batching/storage adapters.  The Event Hub will recieve json enconded messages from he Gateway and will be used for both real-time processing via storm and batch based processing via HDInsight/Hadoop.
 
@@ -27,6 +31,7 @@ The following describes the steps to configure an Event Hub to which we can send
 ## Question? SQL? or Redis? ##
 
 **Storm**
+- 
 
 Microsoft's Azure-based HD Insight service provides Apache Storm capabilities for streaming-data analysis. Storm makes it easy to reliably process unbounded streams of data, doing for realtime processing what Hadoop did for batch processing.
 
@@ -211,13 +216,15 @@ To create the example follow these staps
           	<artifactId>sqljdbc4</artifactId>
           	<version>4.0</version>
       	</dependency>
-  	</dependencies>```
+    </dependencies>
 
+- **TODO: Add in settings file!!!**
+- 
 - Create a new package 
 
-	```com.hackathon.storm```
+	```com.hackathon.storm
 
-- Add a new file ```ParseBolt.java``` and copy the following contents to the file
+- Add a new file ```ParseBolt.java``` and copy the following contents to the file.  This bolt will receive a JSON message from the Event Hub Spout and extract the values.  This will be placed on the STORM tuple stream for downstream processing.
 
 	```package com.hackathon.storm;
 	import backtype.storm.topology.base.BaseBasicBolt;
@@ -228,8 +235,7 @@ To create the example follow these staps
 	import backtype.storm.tuple.Values;
 	
 	import com.google.gson.Gson;
-	
-	
+
 	public class ParseBolt extends BaseBasicBolt  {
 	    @Override
 	    public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
@@ -257,6 +263,182 @@ To create the example follow these staps
 
     	@Override
     	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declareStream("energystream", 	new Fields("timestamp", "deviceid", "reading"));
+        	outputFieldsDeclarer.declareStream("energystream", 	new Fields("timestamp", "deviceid", "reading"));
     	}
-	}```
+	}
+
+- Create a new file ```AugBolt.java``` and copy in the following code.  This will augment the stream by adding in the current timestamp.
+
+    ```
+	package com.hackathon.storm;
+
+	import backtype.storm.topology.BasicOutputCollector;
+	import backtype.storm.topology.OutputFieldsDeclarer;
+	import backtype.storm.topology.base.BaseBasicBolt;
+	import backtype.storm.tuple.Fields;
+	import backtype.storm.tuple.Tuple;
+	import backtype.storm.tuple.Values;
+	
+	import java.text.DateFormat;
+	import java.text.SimpleDateFormat;
+	import java.util.Date;
+	import java.util.Locale;
+	
+	public class AugBolt extends BaseBasicBolt {
+	    @Override
+	    public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
+	
+	        String timestamp = tuple.getStringByField("timestamp");
+	        String deviceid = tuple.getStringByField("deviceid");
+	        int reading = tuple.getIntegerByField("reading");
+	
+	        DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
+	        String servertimestamp = targetFormat.format(new Date());
+	
+	        basicOutputCollector.emit("energystream", new Values(timestamp, deviceid, reading, servertimestamp));
+	    }
+	
+	    @Override
+	    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
+        outputFieldsDeclarer.declareStream("energystream", new Fields	("timestamp", "deviceid", "reading", "servertimestamp"));
+    	}
+	}
+
+-**IF SQL**
+
+- Create a new file ```SqlStorageBolt.java``` and copy the following contents.  This will extract the data from the stream and insert a row into a MS SQL Database table.
+
+	```package com.hackathon.storm;
+    
+    import backtype.storm.topology.BasicOutputCollector;
+    import backtype.storm.topology.OutputFieldsDeclarer;
+    import backtype.storm.topology.base.BaseBasicBolt;
+    import backtype.storm.tuple.Tuple;
+    
+    import java.io.IOException;
+    import java.sql.*;
+    import java.text.DateFormat;
+    import java.text.ParseException;
+    import java.text.SimpleDateFormat;
+    import java.util.Locale;
+    import java.util.Properties;
+    import java.util.Date;
+    
+    public class SqlStorageBolt extends BaseBasicBolt {
+        @Override
+        public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector){
+            Connection connection = null;
+            Statement statement = null;
+            try {
+                Properties properties = new Properties();
+                properties.load(this.getClass().getClassLoader().getResourceAsStream("Config.properties"));
+                String connectionString = properties.getProperty("sql.connection");
+    
+                String timestamp = tuple.getStringByField("timestamp");
+                String deviceid = tuple.getStringByField("deviceid");
+                int reading = tuple.getIntegerByField("reading");
+                String servertimestamp = tuple.getStringByField("servertimestamp");
+    
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", Locale.ENGLISH);
+                Date date =  format.parse(timestamp);
+    
+                DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
+                String targetDate = targetFormat.format(date);
+    
+                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+                connection = DriverManager.getConnection(connectionString);
+    
+                String query = "INSERT into readings VALUES ('" + targetDate +"', '" + deviceid +"', " + reading + ", '" + servertimestamp + "')";
+                statement = connection.createStatement();
+                statement.executeQuery(query);
+    
+            }catch (ClassNotFoundException | SQLException | ParseException | IOException ex ) {
+                ex.printStackTrace();
+                System.out.println(ex.getMessage());
+            }
+            finally
+            {
+                try
+                {
+                    // Close resources.
+                    if (null != connection) connection.close();
+                    if (null != statement) statement.close();
+                }
+                catch (SQLException sqlException) {
+                    // No additional action if close() statements fail.
+                }
+            }
+        }
+    
+        @Override
+        public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
+    
+        }
+    }
+
+-**IF REDIS**
+
+- Add another file ```RedisStorageBolt.java``` and copy the following contents.  This will add a new key to redis (timestamp) and will populate the value as a JSON string representing the data on the tuple
+
+	```package com.hackathon.storm;
+    
+    import backtype.storm.topology.BasicOutputCollector;
+    import backtype.storm.topology.OutputFieldsDeclarer;
+    import backtype.storm.topology.base.BaseBasicBolt;
+    import backtype.storm.tuple.Tuple;
+    import com.google.gson.Gson;
+    import redis.clients.jedis.Jedis;
+    import redis.clients.jedis.JedisPool;
+    
+    import java.util.HashMap;
+    import java.util.Map;
+    import java.util.Properties;
+    
+    public class RedisStorageBolt extends BaseBasicBolt {
+        @Override
+        public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
+    
+            Gson gson = new Gson();
+            try {
+                //Get the deviceid and temperature by field name
+                String timestamp = tuple.getStringByField("timestamp");
+                String deviceid = tuple.getStringByField("deviceid");
+                int reading = tuple.getIntegerByField("reading");
+                String servertimestamp = tuple.getStringByField("servertimestamp");
+    
+                Map<String, Object> obj = new HashMap<String, Object>();
+                obj.put("deviceId", deviceid);
+                obj.put("timestamp", timestamp);
+                obj.put("reading ", reading);
+                obj.put("servertimestamp", servertimestamp);
+    
+                Properties properties = new Properties();
+                properties.load(this.getClass().getClassLoader().getResourceAsStream("Config.properties"));
+    
+                String hostname = properties.getProperty("redis.host");
+                int port = Integer.parseInt(properties.getProperty("redis.port"));
+                String password = properties.getProperty("redis.password");
+                int ttl = Integer.parseInt(properties.getProperty("redis.ttl"));
+    
+                JedisPool pool = new JedisPool(hostname, port);
+                Jedis connection = pool.getResource();
+                connection.auth(password);
+                connection.set(timestamp, (String) gson.toJson(obj));
+                connection.expire(timestamp, ttl);
+            } catch (Exception e) {
+                // LOG.error("Bolt execute error: {}", e);
+                basicOutputCollector.reportError(e);
+            }
+    
+        }
+    
+        @Override
+        public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
+    
+        }
+	}
+
+
+
+
+
