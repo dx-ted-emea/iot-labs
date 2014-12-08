@@ -10,11 +10,18 @@ In order to implement this, it is possible to take consumer equipment and combin
 
 ### Architecture ###
 
-Here an overview of the Lab2; Arduino->PI->EventHub->BusinessLogic
+Here an overview of the Lab3; BusinessLogic->EventHub->Pi->Arduino
 
-# Building an Energy Sensor #
+# Building a Controllable Device #
 
-##Components##
+## Components ##
 
-Sensor control device; an Arduino, Tessel.io, Netduino or similar; a piece of specialist electronics that can connect to many external sensors, gather their signals and perform an action based upon them. Typically these control devices are resource constrained devices that trade capability for customisability and affordability; they may not be network capable but they tend to be able to interface with many sensors at a low level and tend to retail for the price of a trip to the cinema. 
-3. Field gateway; a generic computer, Raspberry Pi or similar. The role of this machine is to interface with resource constrained devices and provide up-lift capacity such as network and security. 
+1. A cloud service encapsulated some eventing technology; a state change occurs which requires an external action to occur. For instance, the Cloud Service detects that the temperature in the Smart Home has dropped below a threshold and the heating should be activated.
+2. Field gateway; a generic computer, Raspberry Pi or similar. The role of this machine is to interface with resource constrained devices and provide up-lift capacity such as network and security. 
+3. A field device, such as a heater which can be remotely activated. In our Lab we will not use mains voltage (if you want to control mains, take great care and use a mains capable relay), but instead simulate this device using a simple LED, the operation of which is identical from the Arduino's point of view. 
+
+## Field Gateway ##
+
+The purpose of the Field Gateway is to lift up resource constrained devices and expose their function over higher requirement systems such as a network. In this example, the Field Gateway will be provided by a Raspberry PI with an Arduino Uno providing the constrained device role. The connectivity to the Arduino couldn't be simpler Electronically; use the USB on the Arduino to connect to the PI.
+
+![](pi-to-arduino.png)
