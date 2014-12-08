@@ -40,6 +40,8 @@ This lab continues on with a basic approach to using the Tessel; using the avail
 
 The design of the Tessel is modular and it is a simple way of adding capabilities to the Tessel board for various fields of sensation. The Tessel Climate module retails for around $25 (USD) and allows for the measurement of Temperature and Humidity.
 
+![](tessel-climate-1.png)
+
 This approach makes electrical engineering possible without needing to solder or build circuits yourself, but if you agree with the author that the joy of IoT is creativity, the expression of creativity is to make rather than consume, explore the lower level [Lab 2.1, Arduino](Lab2.1-Arduino.md) chaining. 
 
 # Writing a Tessel based Environment Sensor #
