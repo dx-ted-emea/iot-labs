@@ -4,23 +4,47 @@
 
 A Smart Home revolves around the idea that unattended sensors can report on ambient conditions in a home in the homeowners absence. A typical requirement for this is to measure the home environment and to react to this and work to alter the environment to the homeowners wishes. For instance, if the temperature drops below a threshold then a heating system may be activated.
 
-In order to implement this, it is possible to take consumer equipment and combine it in a good approximation of how commercial equipment may work. For instance, it is possible to use the **Arduino** hobbyist electronics boards and standardised components to measure temperature 
+In order to implement this, it is possible to take consumer equipment and combine it in a good approximation of how commercial equipment may work. For instance, it is possible to use the **Arduino** consumer electronics boards and standardised components to measure temperature 
+
+### Architecture ###
+
+Here an overview of the Lab2; (Arduino->)Tessel->EventHub->BusinessLogic
+
+# Building an Environment Sensor #
+
+##Components##
+
+The Environment Sensor is made of two main pieces of hardware;
+
+1. External environment sensor; a piece of electronics that senses external environmental factors and emits a signal that represents the state. An example is an input device that alters its voltage based on the temperature to which it is exposed. 
+2. Sensor control device; an Arduino, Tessel.io, Netduino or similar; a piece of specialist electronics that can connect to many external sensors, gather their signals and perform an action based upon them. In this example, we will focus on using the Tessel.io to achieve the workload required and presenting an approach that is also device agnostic.
+
+### External Environment Sensor ###
+
+In order to detect temperature in an environment, there are many options electronically available to you. You can use a thermometer and rig up some computer vision, a thermister (temperature sensitive resister) or bimetallic strips. To get a more accurate sensor output it is now common to use solid-state technology; as heat is applied to a diode the voltage across it increases in a known way. Typically this around 10mV per degree difference in ambient temperature. This approach is known as a ["silicon bandgap" sensor ](http://en.wikipedia.org/wiki/Silicon_bandgap_temperature_sensor)
+
+Not only is this sensor very accurate compared to the other techniques, it is durable to conditions from -40 deg C to + 150 deg C, it never fatigues as it has no moving parts, it doesn't require calibration and costs a couple of dollars. 
+
+This lab will use a LM35 sensor as its source which we can link to any Sensor control device in a simple way. We can either use a simple direct connection to the LM35 on a breadboard to a sensor control device such as a  Tessel or we can chain through an Arduino which would allow us to communicate with many other sensors. In the chaining example, the Tessel acts very much as a field gateway, in an approach that is further explored in Lab 3.
+
+### Sensor Control Device ###
+
+The Sensor Control Device has the sole function of interfacing with lower level electronics equipment and bridging the logical gap of capability between the devices, allowing the readings from the single function temperature sensor to be wrapped into a network oriented packet and distributed to cloud based services. 
+
+The Sensor Control Device can be constructed in many forms; popular choices include:
+1. [Arduino](http://arduino.cc/) controllers, 
+2. [Netduino](http://www.netduino.com/) controllers, which are similar to Arduinos but run Microsofts' .net MicroFramework
+3. [Raspberry Pi](http://www.raspberrypi.org/)
+4. [Tessel](http://tessel.io)
+
+In this lab we will be using a Tessel, which allows the software developer to write their software in Javascript via Nodejs. This convergence of the low level electronics programming with higher level, popular programming languages is common in modern hobbyist hardware development as it allows hardware vendors to target large audiences. 
+
+This lab takes a basic approach to using the Tessel; using the available modules to determine the temperature. If you want to explore the hardware aspect of this lab in more detail, explore the lower level Lab 2.1, Arduino chaining. 
 
 
-# RIoT Labs #
-## Energy Monitoring ##
-**Lab 2**
--
+# Building a scalable Cloud service #
 
-**Energy Monitor**
--
 
-Arduino Due
-
-**Gateway**
--
-
-Tessel?
 
 **Event Hub**
 -
