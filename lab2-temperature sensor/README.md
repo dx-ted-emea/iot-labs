@@ -46,7 +46,9 @@ This lab will use the [**Si7005**](http://www.silabs.com/Support%20Documents/Tec
 
 # Writing a Tessel based Environment Sensor #
 
-The Tessel [documents](https://tessel.io/docs/climate) are a great point of call for this part of the Lab. 
+The Tessel [documents](https://tessel.io/docs/climate) are a great starting point for this part of the Lab. Let's go over those in order to make sure our Tessel and Climate Module are working well.
+
+## Basic Tessel setup ##
 
 Using the Tessel the user can write Javascript in a nodejs compliant manner, using similar approaches to how one might write any nodejs applications, such as the use of `npm` and `require('modulename')`
 
@@ -60,8 +62,36 @@ var climatelib = require('climate-si7005');
 var climate = climatelib.use(tessel.port['A']);
 ```
 
+Once you have access to this, you can continually poll on methods such as `readTemperature` in order to gain a periodic value for the climate modules received temperature:
 
+```javascript
+climate.on('ready', function () {
+  console.log('Connected to si7005');
 
+  // Loop forever
+  setImmediate(function loop () {
+    climate.readTemperature('f', function (err, temp) {
+      climate.readHumidity(function (err, humid) {
+        console.log('Degrees:', temp.toFixed(4) + 'F', 'Humidity:', humid.toFixed(4) + '%RH');
+        setTimeout(loop, 300);
+      });
+    });
+  });
+});
+
+climate.on('error', function(err) {
+  console.log('error connecting module', err);
+});
+setInterval(function(){}, 20000);
+```
+
+So far we have replicated the base function of the Tessel with the Climate module. What we should do now is use this data for something interesting and invoke a remote endpoint hosted in the Cloud with a payload based on the reading that we have just started to receive.
+
+## Event Hubs and Azure ##
+
+[question; detail here or refer back to earlier lab1 example?]
+
+[Here detail how to use Event Hub with nodejs/tessel] 
 
 # Building a scalable Cloud service #
 
