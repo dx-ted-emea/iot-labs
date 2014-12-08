@@ -54,11 +54,13 @@ Once the required modules are pulled into Javascript the Tessel has the ability 
 
 Firstly address the climate module in order set up the dependencies:
 
-```nodejs
+```javascript
 var climatelib = require('climate-si7005');
 
 var climate = climatelib.use(tessel.port['A']);
 ```
+
+
 
 
 # Building a scalable Cloud service #
