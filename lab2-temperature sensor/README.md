@@ -30,19 +30,17 @@ The Sensor Control Device can be constructed in many forms; popular choices incl
 1. [Arduino](http://arduino.cc/) controllers, 
 2. [Netduino](http://www.netduino.com/) controllers, which are similar to Arduinos but run Microsofts' .net MicroFramework
 3. [Raspberry Pi](http://www.raspberrypi.org/)
-4. [Tessel](http://tessel.io)
+4. [Tessel](http://tessel.io) - Tessel is a microcontroller that runs JavaScript. It's Node-compatible and ships with Wifi built in. Use it to easily make physical devices that connect to the web.
 
 In this lab we will be using a Tessel, which allows the software developer to write their software in Javascript via Nodejs. This convergence of the low level electronics programming with higher level, popular programming languages is common in modern hobbyist hardware development as it allows hardware vendors to target large audiences. 
 
 ### External Environment Sensor ###
 
-This lab takes a basic approach to using the Tessel; using the available modules to determine the temperature. If you want to explore the hardware aspect of this lab in more detail, explore the lower level [Lab 2.1, Arduino](Lab2.1-Arduino.md) chaining. 
+This lab continues on with a basic approach to using the Tessel; using the available modules to determine the temperature using the [**Si7005**](http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7005.pdf) based [Climate module](https://tessel.io/docs/climate) for the Tessel. 
 
-In order to detect temperature in an environment, there are many options electronically available to you. You can use a thermometer and rig up some computer vision, a thermister (temperature sensitive resister) or bimetallic strips. To get a more accurate sensor output it is now common to use solid-state technology; as heat is applied to a diode the voltage across it increases in a known way. Typically this around 10mV per degree difference in ambient temperature. This approach is known as a ["silicon bandgap" sensor ](http://en.wikipedia.org/wiki/Silicon_bandgap_temperature_sensor)
+The design of the Tessel is modular and it is a simple way of adding capabilities to the Tessel board for various fields of sensation. The Tessel Climate module retails for around $25 (USD) and allows for the measurement of Temperature and Humidity.
 
-Not only is this sensor very accurate compared to the other techniques, it is durable to conditions from -40 deg C to + 90 deg C, it never fatigues as it has no moving parts, it doesn't require calibration and costs a couple of dollars. 
-
-This lab will use the [**Si7005**](http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7005.pdf) based [Climate module](https://tessel.io/docs/climate) for the Tessel. This is a simple way of adding capabilities to the Tessel board for temperature and humidity. This approach makes electrical engineering possible without needing to solder or build circuits yourself, but if you agree with the author that the joy of IoT is creativity, the expression of creativity is to make rather than consume, explore the lower level [Lab 2.1, Arduino](Lab2.1-Arduino.md) chaining. 
+This approach makes electrical engineering possible without needing to solder or build circuits yourself, but if you agree with the author that the joy of IoT is creativity, the expression of creativity is to make rather than consume, explore the lower level [Lab 2.1, Arduino](Lab2.1-Arduino.md) chaining. 
 
 # Writing a Tessel based Environment Sensor #
 
