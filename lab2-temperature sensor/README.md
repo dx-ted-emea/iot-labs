@@ -60,18 +60,18 @@ In this example we will construct a simple topology in Java that;
 
 **Pre-requisites**
 
+- Storm cluster with remote access enabled (**TODO: outline steps)**
 - A Redis cluster or SQL Database setup in Azure
 - Java 1.7 JDK installed
-- IDE such as Intellij/Eclipse
+- IDE such as Intellij/Eclipse (optional)
 - Maven installed
-- Storm instance created in Azure (**TODO: outline steps)**
 
-To create the example follow these staps
+To create the example follow these steps
 
 - Enable Remote for the Storm cluster
 - Connect and navigate to 
 
-    ` C:\apps\dist\storm-0.9.1.2.1.8.0-2176\examples\eventhubspout`
+    `C:\apps\dist\storm-0.9.1.2.1.8.0-2176\examples\eventhubspout`
 
 - Download the file 
 
@@ -93,7 +93,7 @@ To create the example follow these staps
 
 - Edit `pom.xml` add the following entries
 
-    ```<build>
+	<build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -152,11 +152,11 @@ To create the example follow these staps
                 </includes>
             </resource>
         </resources>
-    </build>```
+    </build>
 
 - Add the following dependencies to pom.xml
 
-	```<dependencies>
+	<dependencies>
     	<dependency>
       		<groupId>junit</groupId>
       		<artifactId>junit</artifactId>
@@ -201,16 +201,13 @@ To create the example follow these staps
           	</exclusions>
           	<scope>provided</scope>
       	</dependency>
+		**IF REDIS**
       	<dependency>
           	<groupId>redis.clients</groupId>
           	<artifactId>jedis</artifactId>
           	<version>2.1.0</version>
       	</dependency>
-      	<dependency>
-          	<groupId>org.mockito</groupId>
-          	<artifactId>mockito-all</artifactId>
-          	<version>1.8.4</version>
-     	</dependency>
+		**IF SQL**
       	<dependency>
           	<groupId>com.microsoft.sqlserver</groupId>
           	<artifactId>sqljdbc4</artifactId>
@@ -218,28 +215,42 @@ To create the example follow these staps
       	</dependency>
     </dependencies>
 
-- **TODO: Add in settings file!!!**
-- 
+- Create a new directory `conf` and add the file `Config.properties` and set the contents as follows
+
+	eventhubspout.username =** <replace with username>**
+	eventhubspout.password = **<Replace with key>**	
+	eventhubspout.namespace = **<replace with namespace>**
+	eventhubspout.entitypath = **<replace with eventhub name>**
+	eventhubspout.partitions.count = <replace with partition count>
+	eventhubspout.checkpoint.interval = 10
+	eventhub.receiver.credits = 1024
+	
+	**IF REDIS**
+	redis.host = **<replace with host>**
+	redis.port = 6379
+	redis.password = **<replace with secret>**
+	redis.ttl = 87300
+	**IF SQL**	
+	sql.connection = jdbc:sqlserver://**<db server>**:**<port>**;database=**<database>**;user=**<username>**;password=**<password>**;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+
+  
 - Create a new package 
 
-```
-	com.hackathon.storm
+	`com.hackathon.storm`
 
+- Add a new file `ParseBolt.java` and copy the following contents to the file.  This bolt will receive a JSON message from the Event Hub Spout and extract the values.  This will be placed on the STORM tuple stream for downstream processing.
 
-- Add a new file ```ParseBolt.java``` and copy the following contents to the file.  This bolt will receive a JSON message from the Event Hub Spout and extract the values.  This will be placed on the STORM tuple stream for downstream processing.
-
-```	
 	package com.hackathon.storm;
-
+    
 	import backtype.storm.topology.base.BaseBasicBolt;
 	import backtype.storm.topology.BasicOutputCollector;
 	import backtype.storm.topology.OutputFieldsDeclarer;
 	import backtype.storm.tuple.Tuple;
 	import backtype.storm.tuple.Fields;
 	import backtype.storm.tuple.Values;
-	
+		
 	import com.google.gson.Gson;
-
+	
 	public class ParseBolt extends BaseBasicBolt  {
 	    @Override
 	    public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
@@ -264,16 +275,15 @@ To create the example follow these staps
 	            basicOutputCollector.emit("energystream", new Values(timestamp, deviceid, reading));
 	        }
 	    }
-
+		
     	@Override
     	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
         	outputFieldsDeclarer.declareStream("energystream", 	new Fields("timestamp", "deviceid", "reading"));
     	}
 	}
 
-- Create a new file ```AugBolt.java``` and copy in the following code.  This will augment the stream by adding in the current timestamp.
+- Create a new file `AugBolt.java` and copy in the following code.  This will augment the stream by adding in the current timestamp.
 
-```
 	package com.hackathon.storm;
 
 	import backtype.storm.topology.BasicOutputCollector;
@@ -310,9 +320,8 @@ To create the example follow these staps
 
 -**IF SQL**
 
-- Create a new file ```SqlStorageBolt.java``` and copy the following contents.  This will extract the data from the stream and insert a row into a MS SQL Database table.
+- Create a new file `SqlStorageBolt.java` and copy the following contents.  This will extract the data from the stream and insert a row into a MS SQL Database table.
 
-```
 	package com.hackathon.storm;
     
     import backtype.storm.topology.BasicOutputCollector;
@@ -383,11 +392,10 @@ To create the example follow these staps
 
 -**IF REDIS**
 
-- Add another file ```RedisStorageBolt.java``` and copy the following contents.  This will add a new key to redis (timestamp) and will populate the value as a JSON string representing the data on the tuple
+- Add another file `RedisStorageBolt.java` and copy the following contents.  This will add a new key to redis (timestamp) and will populate the value as a JSON string representing the data on the tuple
 
-	```
 	package com.hackathon.storm;
-
+	
     import backtype.storm.topology.BasicOutputCollector;
 	import backtype.storm.topology.OutputFieldsDeclarer;
     import backtype.storm.topology.base.BaseBasicBolt;
@@ -442,9 +450,266 @@ To create the example follow these staps
     
         }
 	}
+
+-**If SQL **
+- Lastly add `EnergyReaderSql.java`, this will configure the topology.
+
+	package com.hackathon.storm;
+    
+    import backtype.storm.Config;
+    import backtype.storm.LocalCluster;
+    import backtype.storm.StormSubmitter;
+    import backtype.storm.generated.StormTopology;
+    import backtype.storm.topology.TopologyBuilder;
+    import backtype.storm.tuple.Fields;
+    import com.microsoft.eventhubs.spout.EventHubSpout;
+    import com.microsoft.eventhubs.spout.EventHubSpoutConfig;
+    
+    import java.util.Properties;
+    
+    public class EnergyReaderSql {
+        protected EventHubSpoutConfig spoutConfig;
+        protected int numWorkers;
+    
+        // Reads the configuration information for the Event Hub spout
+        protected void readEHConfig(String[] args) throws Exception {
+    
+            Properties properties = new Properties();
+            properties.load(this.getClass().getClassLoader().getResourceAsStream("Config.properties"));
+    
+            String username = properties.getProperty("eventhubspout.username");
+            String password = properties.getProperty("eventhubspout.password");
+            String namespaceName = properties.getProperty("eventhubspout.namespace");
+            String entityPath = properties.getProperty("eventhubspout.entitypath");
+    
+            String zkEndpointAddress = properties.getProperty("zookeeper.connectionstring");
+            int partitionCount = Integer.parseInt(properties.getProperty("eventhubspout.partitions.count"));
+            int checkpointIntervalInSeconds = Integer.parseInt(properties.getProperty("eventhubspout.checkpoint.interval"));
+            int receiverCredits = Integer.parseInt(properties.getProperty("eventhub.receiver.credits"));
+            System.out.println("Eventhub spout config: ");
+            System.out.println("  partition count: " + partitionCount);
+            System.out.println("  checkpoint interval: " + checkpointIntervalInSeconds);
+            System.out.println("  receiver credits: " + receiverCredits);
+            spoutConfig = new EventHubSpoutConfig(username, password,
+                    namespaceName, entityPath, partitionCount, zkEndpointAddress,
+                    checkpointIntervalInSeconds, receiverCredits);
+    
+            //set the number of workers to be the same as partition number.
+            //the idea is to have a spout and a partial count bolt co-exist in one
+            //worker to avoid shuffling messages across workers in storm cluster.
+            numWorkers = spoutConfig.getPartitionCount();
+    
+            if(args.length > 0) {
+                //set topology name so that sample Trident topology can use it as stream name.
+                spoutConfig.setTopologyName(args[0]);
+            }
+        }
+    
+        // Create the spout using the configuration
+        protected EventHubSpout createEventHubSpout() {
+            EventHubSpout eventHubSpout = new EventHubSpout(spoutConfig);
+            return eventHubSpout;
+        }
+    
+        // Build the topology
+        protected StormTopology buildTopology(EventHubSpout eventHubSpout) {
+            TopologyBuilder topologyBuilder = new TopologyBuilder();
+            // Name the spout 'EventHubsSpout', and set it to create
+            // as many as we have partition counts in the config file
+            topologyBuilder.setSpout("EventHub", eventHubSpout, spoutConfig.getPartitionCount())
+                    .setNumTasks(spoutConfig.getPartitionCount());
+            // Create the parser bolt, which subscribes to the stream from EventHub
+            topologyBuilder.setBolt("ParseBolt", new ParseBolt(), spoutConfig.getPartitionCount())
+                    .localOrShuffleGrouping("EventHub").setNumTasks(spoutConfig.getPartitionCount());
+    
+            topologyBuilder.setBolt("AugBolt", new AugBolt(), spoutConfig.getPartitionCount())
+                    .fieldsGrouping("ParseBolt", "energystream", new Fields("timestamp", "deviceid", "reading")).setNumTasks(spoutConfig.getPartitionCount());
+    
+            // Create the dashboard bolt, which subscribes to the stream from Parser
+            topologyBuilder.setBolt("SqlStorageBolt", new SqlStorageBolt(), spoutConfig.getPartitionCount())
+                    .fieldsGrouping("AugBolt", "energystream", new Fields("timestamp", "deviceid", "reading", "servertimestamp")).setNumTasks(spoutConfig.getPartitionCount());
+    
+            return topologyBuilder.createTopology();
+        }
+    
+        protected void submitTopology(String[] args, StormTopology topology, Config config) throws Exception {
+            // Config config = new Config();
+            config.setDebug(false);
+    
+            //Enable metrics
+            config.registerMetricsConsumer(backtype.storm.metric.LoggingMetricsConsumer.class, 1);
+    
+            // Is this running locally, or on an HDInsight cluster?
+            if (args != null && args.length > 0) {
+                config.setNumWorkers(numWorkers);
+                StormSubmitter.submitTopology(args[0], config, topology);
+            } else {
+                config.setMaxTaskParallelism(2);
+    
+                LocalCluster localCluster = new LocalCluster();
+                localCluster.submitTopology("test", config, topology);
+    
+                Thread.sleep(5000000);
+    
+                localCluster.shutdown();
+            }
+        }
+    
+        // Loads the configuration, creates the spout, builds the topology,
+        // and then submits it
+        protected void runScenario(String[] args) throws Exception{
+            readEHConfig(args);
+            Config config = new Config();
+    
+            EventHubSpout eventHubSpout = createEventHubSpout();
+            StormTopology topology = buildTopology(eventHubSpout);
+            submitTopology(args, topology, config);
+        }
+    
+        public static void main(String[] args) throws Exception {
+            EnergyReaderSql scenario = new EnergyReaderSql();
+            scenario.runScenario(args);
+        }
+    }
 	
 
+-**If Redis **
+- Lastly add `EnergyReaderRedis.java`, this will configure the topology.
+	
+	package com.hackathon.storm;
+    
+    import backtype.storm.Config;
+    import backtype.storm.LocalCluster;
+    import backtype.storm.StormSubmitter;
+    import backtype.storm.generated.StormTopology;
+    import backtype.storm.topology.TopologyBuilder;
+    import backtype.storm.tuple.Fields;
+    import com.microsoft.eventhubs.spout.EventHubSpout;
+    import com.microsoft.eventhubs.spout.EventHubSpoutConfig;
+    
+    import java.util.Properties;
+    
+    public class EnergyReaderRedis {
+        protected EventHubSpoutConfig spoutConfig;
+        protected int numWorkers;
+    
+        // Reads the configuration information for the Event Hub spout
+        protected void readEHConfig(String[] args) throws Exception {
+    
+            Properties properties = new Properties();
+            properties.load(this.getClass().getClassLoader().getResourceAsStream("Config.properties"));
+    
+    
+            String username = properties.getProperty("eventhubspout.username");
+            String password = properties.getProperty("eventhubspout.password");
+            String namespaceName = properties.getProperty("eventhubspout.namespace");
+            String entityPath = properties.getProperty("eventhubspout.entitypath");
+            String zkEndpointAddress = properties.getProperty("zookeeper.connectionstring");
+            int partitionCount = Integer.parseInt(properties.getProperty("eventhubspout.partitions.count"));
+            int checkpointIntervalInSeconds = Integer.parseInt(properties.getProperty("eventhubspout.checkpoint.interval"));
+            int receiverCredits = Integer.parseInt(properties.getProperty("eventhub.receiver.credits"));
+            System.out.println("Eventhub spout config: ");
+            System.out.println("  partition count: " + partitionCount);
+            System.out.println("  checkpoint interval: " + checkpointIntervalInSeconds);
+            System.out.println("  receiver credits: " + receiverCredits);
+            spoutConfig = new EventHubSpoutConfig(username, password,
+                    namespaceName, entityPath, partitionCount, zkEndpointAddress,
+                    checkpointIntervalInSeconds, receiverCredits);
+    
+            //set the number of workers to be the same as partition number.
+            //the idea is to have a spout and a partial count bolt co-exist in one
+            //worker to avoid shuffling messages across workers in storm cluster.
+            numWorkers = spoutConfig.getPartitionCount();
+    
+            if(args.length > 0) {
+                //set topology name so that sample Trident topology can use it as stream name.
+                spoutConfig.setTopologyName(args[0]);
+            }
+        }
+    
+        // Create the spout using the configuration
+        protected EventHubSpout createEventHubSpout() {
+            EventHubSpout eventHubSpout = new EventHubSpout(spoutConfig);
+            return eventHubSpout;
+        }
+    
+        // Build the topology
+        protected StormTopology buildTopology(EventHubSpout eventHubSpout) {
+            TopologyBuilder topologyBuilder = new TopologyBuilder();
+            // Name the spout 'EventHubsSpout', and set it to create
+            // as many as we have partition counts in the config file
+            topologyBuilder.setSpout("EventHub", eventHubSpout, spoutConfig.getPartitionCount())
+                    .setNumTasks(spoutConfig.getPartitionCount());
+            // Create the parser bolt, which subscribes to the stream from EventHub
+            topologyBuilder.setBolt("ParseBolt", new ParseBolt(), spoutConfig.getPartitionCount())
+                    .localOrShuffleGrouping("EventHub").setNumTasks(spoutConfig.getPartitionCount());
+    
+            topologyBuilder.setBolt("AugBolt", new AugBolt(), spoutConfig.getPartitionCount())
+                    .fieldsGrouping("ParseBolt", "energystream", new Fields("timestamp", "deviceid", "reading")).setNumTasks(spoutConfig.getPartitionCount());
+    
+            // Create the dashboard bolt, which subscribes to the stream from Parser
+            topologyBuilder.setBolt("RedisStorageBolt", new RedisStorageBolt(), spoutConfig.getPartitionCount())
+                    .fieldsGrouping("AugBolt", "energystream", new Fields("timestamp", "deviceid", "reading", "servertimestamp")).setNumTasks(spoutConfig.getPartitionCount());
+    
+             return topologyBuilder.createTopology();
+        }
+    
+        protected void submitTopology(String[] args, StormTopology topology, Config config) throws Exception {
+            // Config config = new Config();
+            config.setDebug(false);
+    
+            //Enable metrics
+            config.registerMetricsConsumer(backtype.storm.metric.LoggingMetricsConsumer.class, 1);
+    
+            // Is this running locally, or on an HDInsight cluster?
+            if (args != null && args.length > 0) {
+                config.setNumWorkers(numWorkers);
+                StormSubmitter.submitTopology(args[0], config, topology);
+            } else {
+                config.setMaxTaskParallelism(2);
+    
+                LocalCluster localCluster = new LocalCluster();
+                localCluster.submitTopology("test", config, topology);
+    
+                Thread.sleep(5000000);
+    
+                localCluster.shutdown();
+            }
+        }
+    
+        // Loads the configuration, creates the spout, builds the topology,
+        // and then submits it
+        protected void runScenario(String[] args) throws Exception{
+            readEHConfig(args);
+            Config config = new Config();
+    
+            EventHubSpout eventHubSpout = createEventHubSpout();
+            StormTopology topology = buildTopology(eventHubSpout);
+            submitTopology(args, topology, config);
+        }
+    
+        public static void main(String[] args) throws Exception {
+            EnergyReaderRedis scenario = new EnergyReaderRedis();
+            scenario.runScenario(args);
+        }
+    }
 
+Running the example
+--
 
+To deploy the topology, first build the package using Maven
 
+ `mvn package`
 
+Retrieve the resulting (shaded) jar file and copy to the Storm cluster created earlier.
+
+Run the following command to deploy the topology
+
+**if SQL**
+`C:\apps\dist\storm-0.9.1.2.1.8.0-2176\bin\storm jar PathToJar\EventHubExample-1.0-SNAPSHOT.jar com.hackathon.storm.EnergyReaderSql EnergyReaderSql`
+**IF REDIS**
+`C:\apps\dist\storm-0.9.1.2.1.8.0-2176\bin\storm jar PathToJar\EventHubExample-1.0-SNAPSHOT.jar com.hackathon.storm.EnergyReaderRedis EnergyReaderRedis`
+
+The topology can be monitored at (this is only accessible on the Storm cluster)
+
+`http://headnodehost:8772/`
