@@ -102,7 +102,8 @@ To create the example follow these staps
 
 - Edit `pom.xml` add the following entries
 
-    ```<build>
+```xml
+	<build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -161,7 +162,8 @@ To create the example follow these staps
                 </includes>
             </resource>
         </resources>
-    </build>```
+    </build>
+```
 
 - Add the following dependencies to pom.xml
 
