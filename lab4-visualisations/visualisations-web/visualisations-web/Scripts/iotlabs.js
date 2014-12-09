@@ -1,5 +1,18 @@
 ﻿$(function () {
 
+    var heaterOn = false;
+    setInterval(function () {
+        heaterOn = !heaterOn;
+        if (heaterOn) {
+            $(".heaterOff").hide();
+            $(".heaterOn").fadeIn();
+        }
+        else {
+            $(".heaterOn").hide();
+            $(".heaterOff").fadeIn();
+        }
+    }, 5000);
+
     var energyMonitoringProxy = $.connection.energyMonitorHub;
     energyMonitoringProxy.client.pump = function (readings) {
         console.log(readings);
@@ -34,7 +47,10 @@
                 x: -20
             },
             xAxis: {
-                categories: categories
+                categories: categories,
+                labels: {
+                    enabled: false
+                }
             },
             yAxis: {
                 title: {
