@@ -17,7 +17,7 @@ In this example we will be making use of the MQTT bridge allows lower capability
 ## Create the files ##
 
 - Create a new file `config.js` and set the contents as shown.  We will replace values later in the exercise.
-
+```javascript
 	var Store = require('nitrogen-memory-store');
     
     var config = {
@@ -40,6 +40,7 @@ In this example we will be making use of the MQTT bridge allows lower capability
     config.store = new Store(config);
     
     module.exports = config;
+```
 
 - Create a new file `AzureEventHubManager.js`, this will be used to forward any received messages to a Azure Event Hub.
 
