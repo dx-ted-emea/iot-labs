@@ -16,9 +16,9 @@ It is an important exercise to undertake to choose data points that are suited t
 
 Let's explore the data points available to us:
 
-1. From Lab1: The current and historic energy usage of a Smart Home. The historic energy usage is not likely to change frequently. It is likely this will change only overnight, as batch processes often run in this timeframe.  The current energy usage however is likely to change frequently. It is therefore a candidate for real time data transfer. We can design a system to push this data to the homeowner in real time.
-2. From Lab2: The recent temperature, averaged over the past 1 minute is provided in a data store by Stream Analytics. The data change frequency is no more than this 1 minute interval, so we don't need to push this in real time. Instead, the web client can poll every minute to retrieve this data.
-3. From Lab3: The current state of the heater. This is tied to the change in state detected by AzureML based on the data frequency of Lab2. Since this is again a minimum refresh time of 1 minute, the web client can poll again. 
+1. From **Lab1**: The current and historic energy usage of a Smart Home. The historic energy usage is not likely to change frequently. It is likely this will change only overnight, as batch processes often run in this timeframe.  The current energy usage however is likely to change frequently. It is therefore a candidate for real time data transfer. We can design a system to push this data to the homeowner in real time.
+2. From **Lab2**: The recent temperature, averaged over the past 1 minute is provided in a data store by Stream Analytics. The data change frequency is no more than this 1 minute interval, so we don't need to push this in real time. Instead, the web client can poll every minute to retrieve this data.
+3. From **Lab3**: The current state of the heater. This is tied to the change in state detected by AzureML based on the data frequency of Lab2. Since this is again a minimum refresh time of 1 minute, the web client can poll again. 
 
 ### Design a UI ###
 
@@ -33,3 +33,49 @@ We can build a simple, single view of data using HTML5 using [Bootstrap](https:/
 
 ![](dashboard1.png)
 
+### Scaffold a UI Project ###
+
+Starting with a vanilla ASP.NET project in Visual Studio (screenshots in this lab are Ultimate 2013), select an Empty Project.
+
+![](projectscreenshots/newproject1.png)
+
+![](projectscreenshots/newproject2.png)
+
+This gives us a new empty project. 
+
+![](projectscreenshots/newproject3.png)
+
+We will start by adding the dependencies we need; using Nuget to add Bootstrap and SignalR:
+
+![](projectscreenshots/newproject4.png)
+
+![](projectscreenshots/newproject5.png)
+
+Once these are installed, we have a project structure that contains all the basic elements that we need.
+
+![](projectscreenshots/newproject6.png)
+
+Now we need to create a few files that are specific to our application
+
+- ~/App_Start/Startup.cs - an OWIN startup file the enables SignalR, without this our SignalR Middleware won't be loaded and won't be available.
+- ~/Content/css/iotlabs.css - a file for our custom stylesheets
+- ~/Scripts/iotlabs.js - a file for our application javascript
+- [~/index.html](visualisations-web/visualisations-web/index.html) - a html page to host our app!
+
+####Startup.cs####
+```csharp
+[assembly: OwinStartup(typeof(visualisations_web.App_Start.Startup))]
+
+namespace visualisations_web.App_Start
+{
+    public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+            app.MapSignalR();
+        }
+    }
+}
+```
+
+This is our basic UI Scaffold, which 
