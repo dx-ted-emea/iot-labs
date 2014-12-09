@@ -17,7 +17,7 @@ In this example we will be making use of the MQTT bridge allows lower capability
 ## Create the files ##
 
 - Create a new file `config.js` and set the contents as shown.  We will replace values later in the exercise.
-
+```javascript
 	var Store = require('nitrogen-memory-store');
     
     var config = {
@@ -40,9 +40,11 @@ In this example we will be making use of the MQTT bridge allows lower capability
     config.store = new Store(config);
     
     module.exports = config;
+```
 
 - Create a new file `AzureEventHubManager.js`, this will be used to forward any received messages to a Azure Event Hub.
 
+```javascript
 	var https = require('https');
     var crypto = require('crypto');
     var moment = require('moment')
@@ -116,9 +118,10 @@ In this example we will be making use of the MQTT bridge allows lower capability
     }
     
     module.exports = AzureEventHubManager
-
+```
 - Create a new file `server.js` and set the contents as shown.  This will intercept any messages published by the client, validate a connection using the credentials provided and forward the message to a Azure Event Hub
 
+```javascript
 	var config = require('./config')
       , mqtt = require('mqtt')
       , nitrogen = require('nitrogen');
@@ -209,9 +212,10 @@ In this example we will be making use of the MQTT bridge allows lower capability
             client.stream.end();
         });
     }).listen(config.mqtt_port);
+```
 
 - Create a new file `client.js` and set the contents as shown.  This will create a client connection to the server using credentials derived from `config.js` and push these to the server for processing.
-
+```javascript
     var config = require('./config')
         , mqtt = require('mqtt');
     
@@ -238,7 +242,7 @@ In this example we will be making use of the MQTT bridge allows lower capability
             console.log(result)
         }
     });
-    
+```    
 
 ## Setup Server ##
 
