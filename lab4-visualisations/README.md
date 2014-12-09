@@ -78,4 +78,6 @@ namespace visualisations_web.App_Start
 }
 ```
 
-This is our basic UI Scaffold, which 
+This is our basic UI Scaffold, which we can now go on to extend with custom application logic that will provide the runtime elements of our Visualisation. Currently our project does nothing, it has no SignalR or data access elements, so lets start there.
+
+### Data Driving our Visualisation website ###
