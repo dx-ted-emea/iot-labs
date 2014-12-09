@@ -1,0 +1,32 @@
+{
+  "name": "mqtt",
+  "homepage": "https://github.com/nitrogenjs/mqtt",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nitrogenjs/mqtt.git"
+  },
+  "author": "Tim Park <timfpark@gmail.com>",
+  "version": "0.3.0",
+  "licenses": [
+    {
+      "type": "Apache",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  ],
+  "engines": {
+    "node": "0.10.24"
+  },
+  "dependencies": {
+    "mqtt": "0.3.11",
+    "nitrogen": "~0.2",
+    "nitrogen-memory-store": "~0.2.0",
+    "moment": "~0.3.0"
+  },
+  "devDependencies": {
+    "async" : "latest"
+    },
+  "scripts": {
+    "start": "node server.js",
+    "test": "NODE_ENV=test mocha"
+  }
+}
