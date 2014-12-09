@@ -167,7 +167,8 @@ To create the example follow these staps
 
 - Add the following dependencies to pom.xml
 
-	```<dependencies>
+```xml
+	<dependencies>
     	<dependency>
       		<groupId>junit</groupId>
       		<artifactId>junit</artifactId>
@@ -228,9 +229,10 @@ To create the example follow these staps
           	<version>4.0</version>
       	</dependency>
     </dependencies>
-
+```
 - Create a new directory `conf` and add a file `Config.properties` with the following content
 
+```properties
 	#Event hub configuration
 	eventhubspout.username = **<username>**
 	eventhubspout.password = **<password>**
@@ -248,6 +250,7 @@ To create the example follow these staps
 	
 	#If SQL
 	sql.connection = jdbc:sqlserver://**<sql server>**:1433;database=**<database>**;user=**<username>**;password=**<password>**;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+```
  
 - Create a new package 
 
