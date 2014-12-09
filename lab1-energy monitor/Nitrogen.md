@@ -8,6 +8,8 @@ Messaging also provides abstraction. Messages in Nitrogen follow well known sche
 
 In this example we will be making use of the MQTT bridge allows lower capability devices that can only send or recieve MQTT messages to participate in the Nitrogen ecosystem.
 
+## TODO: Add in more explantion about AzureEventHubManager.js try to break down what its doing ##
+
 ## Pre-requisites ##
 
 - create an account at [http://nitrogen.io](http://nitrogen.io)
