@@ -251,29 +251,29 @@ Now we have the files we need, the server VM should be configured so it can run 
 - Connect to the VM via SSH
 - Execute the following commands to install nodejs and npm
 
-	sudo apt-get install nodejs
-	sudo apt-get install npm
+    sudo apt-get install nodejs
+    sudo apt-get install npm
 
 - Install the nitrogen toolset
 
-	sudo npm install -g nitrogen-cli
-	sudo ln -s /usr/bin/nodejs  /usr/bin/node
+    sudo npm install -g nitrogen-cli
+    sudo ln -s /usr/bin/nodejs  /usr/bin/node
 
 - execute the following command to login to nitrogen (replace <email> as appropriate), enter the password to authenticate.
 
-	n2 principal login **<email>**
+    n2 principal login **<email>**
 
 - Execute the following command and copy the **KEY** (**API-KEY**)
 
-	n2 apikeys ls
+    n2 apikeys ls
 
 - Execute the following command to create a new principal (user) who happens to be a device.  Copy the ID in the result.
 
-	n2 principal create --type device --name 'energyReader’ –apiKey ‘**<API_KEY>**’
+    n2 principal create --type device --name 'energyReader’ –apiKey ‘**<API_KEY>**’
 
 - Execute command, copy the resulting **ACCESS TOKEN**
 
-	n2 principal accesstoken <ID>
+    n2 principal accesstoken <ID>
 
 - The ID and ACCESS TOKEN are used as credentials when authenticating to the server.  
 - Edit config.js
@@ -282,25 +282,25 @@ Now we have the files we need, the server VM should be configured so it can run 
 - Update the parameters **eventhub_namespace**, **eventhub_hubname**, **eventhub_keyname**, **eventhub_keyvalue** to configure the Event Hub to write to
 - Create a directory where we will place the code
 
-	mkdir nitrogen-server
-	cd nitrogen-server
+    mkdir nitrogen-server
+    cd nitrogen-server
 
 - Copy the following files to this directory
 
-	AzureEventHubManager.js
-	Config.js
-	Server.js
+    AzureEventHubManager.js
+    Config.js
+    Server.js
 
 - Using the SSH session, run the following commands to install the node packages
 
-	npm install mqtt
-	npm install nitrogen
-	npm install nitrogen-memory-store
-	npm install moment
+    npm install mqtt
+    npm install nitrogen
+    npm install nitrogen-memory-store
+    npm install moment
 
 - Run the server using the following command
 
-	node server.js
+    node server.js
 
 ## Setup Client ##
 
@@ -309,19 +309,19 @@ Now we have the files we need, the server VM should be configured so it can run 
 - Install node from [http://nodejs.org/download/](http://nodejs.org/download/)
 - Create a new directory 
 
-	mkdir nitrogen-client
-	cd nitrogen-server
+    mkdir nitrogen-client
+    cd nitrogen-server
 
 - Copy the following files to this directory
 
-	client.js
-	config.js
+    client.js
+    config.js
 
 - Execute the following commands to install node modules
 
-	npm install mqtt
-	npm install nitrogen-memory-store
+    npm install mqtt
+    npm install nitrogen-memory-store
 
 - Start the client 
--
-	node client.js
+
+    node client.js
