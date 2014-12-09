@@ -29,4 +29,7 @@ What we really want is a single view grid of the state of our system. If we spli
 - Energy Usage - i.e. a chart
 - Current Heater Status - i.e. a pictograph depicting on/off
 
-We can build a simple, single view of data using HTML5 using [Bootstrap](https://github.com/twbs/bootstrap) in order to ease our UI concerns. Bootstrap lends itself to quickly building this type of UI. 
+We can build a simple, single view of data using HTML5 using [Bootstrap](https://github.com/twbs/bootstrap) in order to ease our UI concerns. Bootstrap lends itself to quickly building this type of UI.
+
+![](dashboard1.png)
+
