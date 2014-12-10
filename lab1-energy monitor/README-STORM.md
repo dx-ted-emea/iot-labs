@@ -102,7 +102,8 @@ To create the example follow these staps
 
 - Edit `pom.xml` add the following entries
 
-    ```<build>
+```xml
+	<build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -161,11 +162,13 @@ To create the example follow these staps
                 </includes>
             </resource>
         </resources>
-    </build>```
+    </build>
+```
 
 - Add the following dependencies to pom.xml
 
-	```<dependencies>
+```xml
+	<dependencies>
     	<dependency>
       		<groupId>junit</groupId>
       		<artifactId>junit</artifactId>
@@ -226,9 +229,10 @@ To create the example follow these staps
           	<version>4.0</version>
       	</dependency>
     </dependencies>
-
+```
 - Create a new directory `conf` and add a file `Config.properties` with the following content
 
+```properties
 	#Event hub configuration
 	eventhubspout.username = **<username>**
 	eventhubspout.password = **<password>**
@@ -246,6 +250,7 @@ To create the example follow these staps
 	
 	#If SQL
 	sql.connection = jdbc:sqlserver://**<sql server>**:1433;database=**<database>**;user=**<username>**;password=**<password>**;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+```
  
 - Create a new package 
 
@@ -255,6 +260,7 @@ To create the example follow these staps
 
 - Add a new file `ParseBolt.java` and copy the following contents to the file.  This bolt will receive a JSON message from the Event Hub Spout and extract the values.  This will be placed on the STORM tuple stream for downstream processing.
 
+```java
 	package com.hackathon.storm;
 
 	import backtype.storm.topology.base.BaseBasicBolt;
@@ -296,10 +302,11 @@ To create the example follow these staps
         	outputFieldsDeclarer.declareStream("energystream", 	new Fields("timestamp", "deviceid", "reading"));
     	}
 	}
+```
 
 - Create a new file `AugBolt.java` and copy in the following code.  This will augment the stream by adding in the current timestamp.
 
-
+```java
 	package com.hackathon.storm;
 
 	import backtype.storm.topology.BasicOutputCollector;
@@ -333,11 +340,12 @@ To create the example follow these staps
         outputFieldsDeclarer.declareStream("energystream", new Fields	("timestamp", "deviceid", "reading", "servertimestamp"));
     	}
 	}
-
+```
 -**IF SQL**
 
 - Create a new file `SqlStorageBolt.java` and copy the following contents.  This will extract the data from the stream and insert a row into a MS SQL Database table.
 
+```java
 	package com.hackathon.storm;
     
     import backtype.storm.topology.BasicOutputCollector;
@@ -405,11 +413,13 @@ To create the example follow these staps
     
         }
     }
+```
 
 -**IF REDIS**
 
 - Add another file `RedisStorageBolt.java` and copy the following contents.  This will add a new key to redis (timestamp) and will populate the value as a JSON string representing the data on the tuple
 
+```java
 	package com.hackathon.storm;
 
     import backtype.storm.topology.BasicOutputCollector;
@@ -466,11 +476,13 @@ To create the example follow these staps
     
         }
 	}
+```
 	
 - If SQL
 - Add an additional file to configure the topology `EnergyReaderSql.java` 
 
-package com.hackathon.storm;
+```java
+	package com.hackathon.storm;
     
     import backtype.storm.Config;
     import backtype.storm.LocalCluster;
@@ -587,11 +599,13 @@ package com.hackathon.storm;
             scenario.runScenario(args);
         }
     }
+```
 
 - If Redis
 - Add an additional file to configure the topology `EnergyReaderRedis.java`
 
-package com.hackathon.storm;
+```java
+	package com.hackathon.storm;
     
         import backtype.storm.Config;
         import backtype.storm.LocalCluster;
@@ -711,6 +725,7 @@ package com.hackathon.storm;
                 scenario.runScenario(args);
             }
         }
+```
 
 Running the topology
 -

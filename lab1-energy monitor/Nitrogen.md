@@ -8,6 +8,8 @@ Messaging also provides abstraction. Messages in Nitrogen follow well known sche
 
 In this example we will be making use of the MQTT bridge allows lower capability devices that can only send or recieve MQTT messages to participate in the Nitrogen ecosystem.
 
+## TODO: Add in more explantion about AzureEventHubManager.js try to break down what its doing ##
+
 ## Pre-requisites ##
 
 - create an account at [http://nitrogen.io](http://nitrogen.io)
@@ -17,7 +19,7 @@ In this example we will be making use of the MQTT bridge allows lower capability
 ## Create the files ##
 
 - Create a new file `config.js` and set the contents as shown.  We will replace values later in the exercise.
-
+```javascript
 	var Store = require('nitrogen-memory-store');
     
     var config = {
@@ -40,9 +42,11 @@ In this example we will be making use of the MQTT bridge allows lower capability
     config.store = new Store(config);
     
     module.exports = config;
+```
 
 - Create a new file `AzureEventHubManager.js`, this will be used to forward any received messages to a Azure Event Hub.
 
+```javascript
 	var https = require('https');
     var crypto = require('crypto');
     var moment = require('moment')
@@ -116,9 +120,10 @@ In this example we will be making use of the MQTT bridge allows lower capability
     }
     
     module.exports = AzureEventHubManager
-
+```
 - Create a new file `server.js` and set the contents as shown.  This will intercept any messages published by the client, validate a connection using the credentials provided and forward the message to a Azure Event Hub
 
+```javascript
 	var config = require('./config')
       , mqtt = require('mqtt')
       , nitrogen = require('nitrogen');
@@ -209,9 +214,10 @@ In this example we will be making use of the MQTT bridge allows lower capability
             client.stream.end();
         });
     }).listen(config.mqtt_port);
+```
 
 - Create a new file `client.js` and set the contents as shown.  This will create a client connection to the server using credentials derived from `config.js` and push these to the server for processing.
-
+```javascript
     var config = require('./config')
         , mqtt = require('mqtt');
     
@@ -238,7 +244,7 @@ In this example we will be making use of the MQTT bridge allows lower capability
             console.log(result)
         }
     });
-    
+```    
 
 ## Setup Server ##
 
@@ -247,29 +253,29 @@ Now we have the files we need, the server VM should be configured so it can run 
 - Connect to the VM via SSH
 - Execute the following commands to install nodejs and npm
 
-	sudo apt-get install nodejs
-	sudo apt-get install npm
+    sudo apt-get install nodejs
+    sudo apt-get install npm
 
 - Install the nitrogen toolset
 
-	sudo npm install -g nitrogen-cli
-	sudo ln -s /usr/bin/nodejs  /usr/bin/node
+    sudo npm install -g nitrogen-cli
+    sudo ln -s /usr/bin/nodejs  /usr/bin/node
 
 - execute the following command to login to nitrogen (replace <email> as appropriate), enter the password to authenticate.
 
-	n2 principal login **<email>**
+    n2 principal login **<email>**
 
 - Execute the following command and copy the **KEY** (**API-KEY**)
 
-	n2 apikeys ls
+    n2 apikeys ls
 
 - Execute the following command to create a new principal (user) who happens to be a device.  Copy the ID in the result.
 
-	n2 principal create --type device --name 'energyReader’ –apiKey ‘**<API_KEY>**’
+    n2 principal create --type device --name 'energyReader’ –apiKey ‘**<API_KEY>**’
 
 - Execute command, copy the resulting **ACCESS TOKEN**
 
-	n2 principal accesstoken <ID>
+    n2 principal accesstoken <ID>
 
 - The ID and ACCESS TOKEN are used as credentials when authenticating to the server.  
 - Edit config.js
@@ -278,25 +284,25 @@ Now we have the files we need, the server VM should be configured so it can run 
 - Update the parameters **eventhub_namespace**, **eventhub_hubname**, **eventhub_keyname**, **eventhub_keyvalue** to configure the Event Hub to write to
 - Create a directory where we will place the code
 
-	mkdir nitrogen-server
-	cd nitrogen-server
+    mkdir nitrogen-server
+    cd nitrogen-server
 
 - Copy the following files to this directory
 
-	AzureEventHubManager.js
-	Config.js
-	Server.js
+    AzureEventHubManager.js
+    Config.js
+    Server.js
 
 - Using the SSH session, run the following commands to install the node packages
 
-	npm install mqtt
-	npm install nitrogen
-	npm install nitrogen-memory-store
-	npm install moment
+    npm install mqtt
+    npm install nitrogen
+    npm install nitrogen-memory-store
+    npm install moment
 
 - Run the server using the following command
 
-	node server.js
+    node server.js
 
 ## Setup Client ##
 
@@ -305,19 +311,19 @@ Now we have the files we need, the server VM should be configured so it can run 
 - Install node from [http://nodejs.org/download/](http://nodejs.org/download/)
 - Create a new directory 
 
-	mkdir nitrogen-client
-	cd nitrogen-server
+    mkdir nitrogen-client
+    cd nitrogen-server
 
 - Copy the following files to this directory
 
-	client.js
-	config.js
+    client.js
+    config.js
 
 - Execute the following commands to install node modules
 
-	npm install mqtt
-	npm install nitrogen-memory-store
+    npm install mqtt
+    npm install nitrogen-memory-store
 
 - Start the client 
--
-	node client.js
+
+    node client.js
