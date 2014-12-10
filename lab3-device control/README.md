@@ -111,3 +111,35 @@ void loop() {
       }
 }
 ```
+
+## Build a Field Gateway ##
+
+The field gateway is a device with a higher capability than the output device and takes responsibility for network traffic and security concerns regarding the communication from the Cloud Service to the Smart Home. 
+
+The field gateway can be any capable device from a PC to an advanced piece of custom electronics. In this instance we will be using a Raspberry Pi, which fits between electronics and computers, it is a small, low capability, low cost piece of electronics that runs Linux, a full OS more normally found on PCs. 
+
+Alternatives to the Raspberry Pi are pcDuino, Arduino Yún or a tablet. The base requirements for this part of the Lab are a USB connection, some form of networking (provided by a WIFI dongle on the Raspberry Pi) and the capability to run Python. Many alternatives to the Pi are possible that support these requirements, so this secton of the lab is considered **portable** between multiple Field Gateways.
+
+### Higher Capabilities? ###
+
+The capabilities of the Field Gateway are not particularly enormous. We need the Field Gateway to communicate with the controllable device over Serial (not necessarily over USB as the Arduino provides UART pins; we are using USB for simple wiring) and we need the Field Gateway to be able to communicate over a network in a stardards compliant manner.
+
+The standard we will be using is AMQP; the AMQP bus will be the Azure Service Bus and the AMQP client will be the Field Gateway. The tool we will use on the Field Gateway to achieve AMQP is [Apache Qpid](http://qpid.apache.org/overview.html).
+
+> Apache Qpid™ makes messaging tools that speak AMQP and support many languages and platforms.
+> 
+> AMQP is an open internet protocol for reliably sending and receiving messages. It makes it possible for everyone to build a diverse, coherent messaging ecosystem.
+
+It is possible for us to use many languages and platform whilst using the Qpid library; since we are using the Raspberry Pi, Python is a natural choice for us. The Qpid library that supports Python is called **Proton**.
+
+Note that we can swap Python for another language and swap the Raspberry Pi for another platform, and provided Qpid (or another project) has AMQP support, our Field Gateway can be on different hardward. 
+
+If you chose to deploy onto a Microsoft Windows based Field Gateway (PC or Tablet) you gain the additional option of using the native Azure ServiceBus SDK, which doesn't use AMQP but a proprietary standard. 
+
+### Implementing a Field Gateway ###
+
+[Code snippets for Python to Arduino, 2 way pass through, SB code]
+
+## Communicating To the Field Gateway ##
+
+The reason for connecting Arduino to Raspberry Pi was to provide a secure endpoint that is.
