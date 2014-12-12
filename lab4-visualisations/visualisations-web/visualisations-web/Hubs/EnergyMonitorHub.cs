@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNet.SignalR;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using visualisations_web.DataAccess;
+using visualisations_web.Models;
 
 namespace visualisations_web.Hubs
 {
@@ -18,5 +20,17 @@ namespace visualisations_web.Hubs
             if (!runningTasks.ContainsKey(deviceId))
                 runningTasks.Add(deviceId, new RedisReader<EnergyMonitorHub>(deviceId));
         }
+
+        public AverageDeviceEnergyUsageByHour[] GetAverages()
+        {
+            var deviceId = "DeviceId";
+
+            var connectionString = ConfigurationManager.ConnectionStrings["EnergyDb"].ConnectionString;
+            using (AverageEnergyUsageContext ctx = new AverageEnergyUsageContext(connectionString))
+            {
+                return ctx.Averages.Where(t => t.DeviceId == deviceId).OrderBy(t => t.HourOfDay).ToArray();
+            }
+        }
+
     }
 }

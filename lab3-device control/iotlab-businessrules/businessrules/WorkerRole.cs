@@ -87,6 +87,10 @@ namespace businessrules
                 var correlationId = Guid.NewGuid().ToString("n");
 
                 var heaterStatus = Query(correlationId);
+                if (heaterStatus == HeaterStatus.UNKNOWN)
+                {
+                    continue;
+                }
                 using (TemperatureReadingContext context = new TemperatureReadingContext(temperatureDbConnectionString))
                 {
                     //get the most recent entry
@@ -109,7 +113,7 @@ namespace businessrules
                         }
                     }
                 }
-                await Task.Delay(30000);//temperature is recorded at a freshness hertz of 60 seconds, check twice as frequently 
+                await Task.Delay(5000);//temperature is recorded at a freshness hertz of 60 seconds, check twice as frequently 
             }
         }
 

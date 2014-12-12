@@ -139,9 +139,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\Startup.cs" />
+    <Compile Include="DataAccess\AverageEnergyUsageContext.cs" />
     <Compile Include="DataAccess\TemperatureReadingContext.cs" />
     <Compile Include="Hubs\HeaterHub.cs" />
     <Compile Include="Hubs\TemperatureHub.cs" />
+    <Compile Include="Models\AverageDeviceEnergyUsageByHour.cs" />
     <Compile Include="Models\HeaterStatus.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="DataAccess\CurrentEnergyContext.cs" />
