@@ -33,9 +33,10 @@
         var series = new Array(1);
         series[0] = { name: 'Device1', data: new Array(readings.length) };
         for (var i = 0; i < readings.length; i++) {
-            categories[i] = readings[i].ServerTimestamp;
-            series[0].data[i] = readings[i].Reading;
+            categories[i] = readings[i].timestamp;
+            series[0].data[i] = readings[i].endReading;
         }
+        console.log(series[0].data);
 
         $('#energyMonitorChart').highcharts({
             title: {

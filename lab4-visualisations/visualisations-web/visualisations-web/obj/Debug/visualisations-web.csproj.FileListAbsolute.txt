@@ -21,3 +21,6 @@ C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bi
 C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\EntityFramework.xml
 C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\EntityFramework.SqlServer.xml
 C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\obj\Debug\visualisations-web.csprojResolveAssemblyReference.cache
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\StackExchange.Redis.dll
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\StackExchange.Redis.pdb
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\StackExchange.Redis.xml
