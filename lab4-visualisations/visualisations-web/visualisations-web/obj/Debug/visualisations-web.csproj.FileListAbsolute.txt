@@ -24,3 +24,9 @@ C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\ob
 C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\StackExchange.Redis.dll
 C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\StackExchange.Redis.pdb
 C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\StackExchange.Redis.xml
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\System.Net.Http.Formatting.dll
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\System.Web.Http.dll
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\System.Web.Http.Owin.dll
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\System.Net.Http.Formatting.xml
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\System.Web.Http.xml
+C:\src\MicrosoftIoT\lab4-visualisations\visualisations-web\visualisations-web\bin\System.Web.Http.Owin.xml

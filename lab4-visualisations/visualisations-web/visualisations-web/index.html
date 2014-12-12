@@ -22,7 +22,8 @@
         <div class="row">
             <div class="col-md-6 text-center">
                 <h1>It's now</h1>
-                <div id="currentTemperature" class="heaterStatus">21 &deg;C</div>
+                <div class="heaterStatus"><span id="currentTemperature">21</span> &deg;c</div>
+                <div id="temperatureUpdated"></div>
             </div>
             <div class="col-md-6 text-center">
                 <h1>Today's Temperature</h1>
@@ -54,6 +55,7 @@
     </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/Scripts/moment.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/Scripts/bootstrap.min.js"></script>
     <script src="/Scripts/jquery.signalR-2.1.2.min.js"></script>

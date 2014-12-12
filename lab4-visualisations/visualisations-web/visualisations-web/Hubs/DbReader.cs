@@ -20,18 +20,16 @@ namespace visualisations_web.Hubs
 
         private async Task Run(string deviceId)
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["EnergyDb"].ConnectionString;
+            var connectionString = ConfigurationManager.ConnectionStrings["TemperatureDb"].ConnectionString;
 
             while (true)
             {
-                using (ReadingsContext context = new ReadingsContext(connectionString))
+                using (TemperatureReadingContext context = new TemperatureReadingContext(connectionString))
                 {
-                    var readings = context.Readings.Where(t=>t.DeviceId==deviceId)
-                        .OrderByDescending(t => t.ServerTimestamp).Take(100).ToList();
+                    var reading = context.Readings.Where(t => t.DeviceId == deviceId)
+                        .OrderByDescending(t => t.EndTime).First();
 
-                    readings.Reverse();
-
-                    _hubContext.Clients.Group(deviceId).pump(readings);
+                    _hubContext.Clients.Group(deviceId).pump(reading);
                 }
 
                 await Task.Delay(1000);

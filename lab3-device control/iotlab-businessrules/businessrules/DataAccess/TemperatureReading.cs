@@ -10,11 +10,13 @@ namespace businessrules.DataAccess
     [Table("avgdevicereadings")]
     public class TemperatureReading
     {
+        [Column("readingId"), Key]
+        public int ReadingId { get; set; }
         [Column("starttime")]
         public DateTime StartTime { get; set; }
         [Column("endtime")]
         public DateTime EndTime { get; set; }
-        [Column("deviceid"), Key]
+        [Column("deviceid")]
         public string DeviceId { get; set; }
         [Column("temperature")]
         public double Temperature { get; set; }
