@@ -138,8 +138,281 @@ If you chose to deploy onto a Microsoft Windows based Field Gateway (PC or Table
 
 ### Implementing a Field Gateway ###
 
-[Code snippets for Python to Arduino, 2 way pass through, SB code]
+The Field Gateway utilises demjson for serialization, providing a better tolerance for json strings in non-standard delimits and qpid proton for messaging.
+
+It is important to note that the AMQP communication respects CorrelationIds of the original received message and a subsequent reply is annotated with the same CorrelationId so that the cloud service is able to utilise a request-response messaging pattern. 
+
+```python
+
+import sys, optparse, demjson, serial, time
+from proton import *
+
+class MessageSender:
+  def send(self, sendUri, message, correlation_id, group_id):
+    mng = Messenger()
+    mng.start()
+
+    msg = Message()
+    msg.address = sendUri
+    msg.correlation_id = correlation_id
+    msg.group_id = group_id
+    msg.body = unicode(demjson.encode(message))
+    mng.put(msg)
+
+    mng.send()
+    print "sent:" + demjson.encode(message)
+    mng.stop()
+    return
+
+class ArduinoController:
+  def __init__(self, portAddress):
+    self.port = serial.Serial(portAddress, 9600, 8)
+
+  def query(self):
+    self.port.write("QUERY\0")
+    time.sleep(0.3)
+    reply = self.port.read(self.port.inWaiting())
+    return reply
+
+  def on(self):
+    self.port.write("ON\0")
+    time.sleep(0.3)
+    reply = self.port.read(self.port.inWaiting())
+    return reply
+
+  def off(self):
+    self.port.write("OFF\0")
+    time.sleep(0.3)
+    reply = self.port.read(self.port.inWaiting())
+    return reply    
+
+defaultUri = "amqps://RootManageSharedAccessKey:v2vGRS15kRoeZhb++6M77BS7IplSXCdvMfZnfrwP97M=@iotlabs.servicebus.windows.net/"
+
+parser = optparse.OptionParser(usage="usage: %prog [options]", description="IoT Hackathon Labs Field Gateway")
+
+parser.add_option("-a", "--address", default=defaultUri,
+		  help="Address of the Azure Service Bus the field gateway should utilise")
+
+sendTopic = "fieldgatewaytobusinessrules"
+receiveTopic = "businessrulestofieldgateway"
+
+opts, args = parser.parse_args()
+if not args:
+	args = ["Sample message"]
+
+heaterDevice = ArduinoController("/dev/ttyACM0")
+
+receiveEndpoints = [ defaultUri + "/" + receiveTopic + "/Subscriptions/all" ]
+
+mng = Messenger()
+mng.incoming_window = 1
+mng.start()
+
+for a in receiveEndpoints:
+  mng.subscribe(a)
+
+msg = Message()
+while True:
+  mng.recv()
+  while mng.incoming:
+    try:
+      mng.get(msg)
+    except Exception, e:
+      print e
+    else:
+      #print msg.address, msg.subject or "(no subject)", msg.properties, msg.body, msg.correlation_id, msg.id, msg.reply_to
+      print msg.body
+      msgJson = demjson.decode(msg.body)
+
+      status = "unknown"
+      if "action" in msgJson:
+        if msgJson["action"] == "on":
+          status = heaterDevice.on();
+        elif msgJson["action"] == "off": 
+          status = heaterDevice.off();
+        elif msgJson["action"] == "query":
+          status = heaterDevice.query();
+
+        sender = MessageSender()
+        sender.send(defaultUri + sendTopic, { "heaterStatus" : status }, msg.correlation_id, msg.reply_to_group_id)
+      mng.accept()
+
+mng.stop()
+
+
+```
 
 ## Communicating To the Field Gateway ##
 
-The reason for connecting Arduino to Raspberry Pi was to provide a secure endpoint that is.
+The reason for connecting Arduino to Raspberry Pi was to provide a secure endpoint that is capable of receiving commands originating in a cloud service. The originator cloud service is an Azure Worker Role that:
+
+- Reads from the heater (via Field Gateway) 
+- Reads from the temperatureDb to determine the most recent temperature reading
+- Determines whether the temperature is too low or too high, and sets the heater status accordingly
+- Notifies visualisation aspects (covered in Lab4) 
+
+The Field Gateway receives messages via AMQP and when it replies it uses the correlationId of all incoming messages in an associated responses. This allows the Cloud Service to implement a request-response pattern in its messaging to the Field Gateway.
+
+```csharp
+namespace businessrules
+{
+    public class WorkerRole : RoleEntryPoint
+    {
+        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
+        private TopicClient _client;
+        private SubscriptionClient _subClient;
+        private MessagingFactory _factory;
+        private NamespaceManager _namespaceMgr;
+        private string _topicNameReceive;
+
+        public override void Run()
+        {
+            Trace.TraceInformation("businessrules is running");
+
+            try
+            {
+                this.RunAsync(this.cancellationTokenSource.Token).Wait();
+            }
+            finally
+            {
+                this.runCompleteEvent.Set();
+            }
+        }
+
+        public override bool OnStart()
+        {
+            // Set the maximum number of concurrent connections
+            ServicePointManager.DefaultConnectionLimit = 12;
+
+            // For information on handling configuration changes
+            // see the MSDN topic at http://go.microsoft.com/fwlink/?LinkId=166357.
+
+            bool result = base.OnStart();
+
+            Trace.TraceInformation("businessrules has been started");
+
+            return result;
+        }
+
+        public override void OnStop()
+        {
+            Trace.TraceInformation("businessrules is stopping");
+
+            this.cancellationTokenSource.Cancel();
+            this.runCompleteEvent.WaitOne();
+
+            base.OnStop();
+
+            Trace.TraceInformation("businessrules has stopped");
+        }
+
+        private async Task RunAsync(CancellationToken cancellationToken)
+        {
+            var temperatureDbConnectionString = CloudConfigurationManager.GetSetting("TemperatureDbConnectionString");
+            var notificationEndpoint = CloudConfigurationManager.GetSetting("NotificationUri");
+
+            var topicNameSend = "businessrulestofieldgateway";
+            _topicNameReceive = "fieldgatewaytobusinessrules";
+            _namespaceMgr = NamespaceManager.CreateFromConnectionString(CloudConfigurationManager.GetSetting("ServiceBusConnectionString"));
+            _factory = MessagingFactory.CreateFromConnectionString(CloudConfigurationManager.GetSetting("ServiceBusConnectionString"));
+            _client = _factory.CreateTopicClient(topicNameSend);
+
+            while (true)
+            {
+                var correlationId = Guid.NewGuid().ToString("n");
+
+                var heaterStatus = Query(correlationId);
+                using (TemperatureReadingContext context = new TemperatureReadingContext(temperatureDbConnectionString))
+                {
+                    //get the most recent entry
+                    var tempReading = context.Readings.OrderByDescending(t=>t.StartTime).First();
+
+                    if (tempReading.Temperature >= 22)
+                    {
+                        if (heaterStatus == HeaterStatus.ON)
+                        {
+                            TurnOff(correlationId);
+                            NotifyWebUi(notificationEndpoint, false);
+                        }
+                    }
+                    else if (tempReading.Temperature <= 20)
+                    {
+                        if (heaterStatus == HeaterStatus.OFF)
+                        {
+                            TurnOn(correlationId);
+                            NotifyWebUi(notificationEndpoint, true);
+                        }
+                    }
+                }
+                await Task.Delay(30000);//temperature is recorded at a freshness hertz of 60 seconds, check twice as frequently 
+            }
+        }
+
+
+        HeaterStatus TurnOn(string correlationId)
+        {
+            return HeaterCommunication(correlationId, "on");
+        }
+        HeaterStatus TurnOff(string correlationId)
+        {
+            return HeaterCommunication(correlationId, "off");
+        }
+        HeaterStatus Query(string correlationId)
+        {
+            return HeaterCommunication(correlationId, "query");
+        }
+
+        HeaterStatus Parse(string reply)
+        {
+            var jObject = JObject.Parse(reply);
+
+            if (jObject["heaterStatus"].Value<string>() == "ON")
+                return HeaterStatus.ON;
+            else if (jObject["heaterStatus"].Value<string>() == "OFF")
+                return HeaterStatus.OFF;
+
+            return HeaterStatus.UNKNOWN;
+            
+        }
+
+        private HeaterStatus HeaterCommunication(string correlationId, string action)
+        {
+            var subscriptionDesc = new SubscriptionDescription(_topicNameReceive, correlationId);
+            subscriptionDesc.DefaultMessageTimeToLive = TimeSpan.FromSeconds(30);
+            _namespaceMgr.CreateSubscription(subscriptionDesc, new CorrelationFilter(correlationId));
+
+            Trace.TraceInformation("Performing Heater Action: {0}", action);
+            _client.Send(CreateMessage(correlationId, action));
+
+            var receiveClient = _factory.CreateSubscriptionClient(_topicNameReceive, correlationId, ReceiveMode.ReceiveAndDelete);
+            var receiveMessage = receiveClient.Receive();
+
+            string s = receiveMessage.GetBody<string>();
+            Trace.TraceInformation("Heater Reports: {0}", s);
+
+            _namespaceMgr.DeleteSubscription(_topicNameReceive, correlationId);
+
+            return Parse(s);
+        }
+
+        static BrokeredMessage CreateMessage(string correlationId, string action)
+        {
+            var utf8String = "{ 'action' : '"+action+"' }";
+            BrokeredMessage message = new BrokeredMessage(new MemoryStream(Encoding.UTF8.GetBytes(utf8String)), true);
+            message.CorrelationId = correlationId;
+
+            return message;
+        } 
+        private async Task NotifyWebUi(string notificationEndpoint, bool isTurnedOn)
+        {
+            var jsonString = JObject.FromObject(new { EventTime = DateTime.Now, IsTurnedOn = isTurnedOn }).ToString();
+            using (var client = new HttpClient())
+            {
+                HttpContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+                await client.PostAsync(notificationEndpoint, content);
+            }
+        }
+    }
+}
+```
