@@ -248,23 +248,32 @@ The reason for connecting Arduino to Raspberry Pi was to provide a secure endpoi
 
 - Reads from the heater (via Field Gateway) 
 - Reads from the temperatureDb to determine the most recent temperature reading
-- Determines whether the temperature is too low or too high, and sets the heater status accordingly
+- Determines whether the temperature is too low or too high, and sets the heater status accordingly (covered in Lab2)
 - Notifies visualisation aspects (covered in Lab4) 
 
 The Field Gateway receives messages via AMQP and when it replies it uses the correlationId of all incoming messages in an associated responses. This allows the Cloud Service to implement a request-response pattern in its messaging to the Field Gateway.
 
 ```csharp
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.WindowsAzure;
+using Microsoft.WindowsAzure.ServiceRuntime;
+using System.Text;
+using businessrules.DataAccess;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using businessrules.DeviceControl;
+
 namespace businessrules
 {
     public class WorkerRole : RoleEntryPoint
     {
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-        private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
-        private TopicClient _client;
-        private SubscriptionClient _subClient;
-        private MessagingFactory _factory;
-        private NamespaceManager _namespaceMgr;
-        private string _topicNameReceive;
+        private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);        
 
         public override void Run()
         {
@@ -311,28 +320,27 @@ namespace businessrules
         {
             var temperatureDbConnectionString = CloudConfigurationManager.GetSetting("TemperatureDbConnectionString");
             var notificationEndpoint = CloudConfigurationManager.GetSetting("NotificationUri");
-
-            var topicNameSend = "businessrulestofieldgateway";
-            _topicNameReceive = "fieldgatewaytobusinessrules";
-            _namespaceMgr = NamespaceManager.CreateFromConnectionString(CloudConfigurationManager.GetSetting("ServiceBusConnectionString"));
-            _factory = MessagingFactory.CreateFromConnectionString(CloudConfigurationManager.GetSetting("ServiceBusConnectionString"));
-            _client = _factory.CreateTopicClient(topicNameSend);
+            var heater = new HeaterCommunication();
 
             while (true)
             {
                 var correlationId = Guid.NewGuid().ToString("n");
 
-                var heaterStatus = Query(correlationId);
-                using (TemperatureReadingContext context = new TemperatureReadingContext(temperatureDbConnectionString))
+                var heaterStatus = heater.Query(correlationId);
+                if (heaterStatus == HeaterStatus.UNKNOWN)
+                {
+                    continue;
+                }
+                using (TemperatureReadingContext temperatureDb = new TemperatureReadingContext(temperatureDbConnectionString))
                 {
                     //get the most recent entry
-                    var tempReading = context.Readings.OrderByDescending(t=>t.StartTime).First();
+                    var tempReading = temperatureDb.Readings.OrderByDescending(t=>t.StartTime).First();
 
                     if (tempReading.Temperature >= 22)
                     {
                         if (heaterStatus == HeaterStatus.ON)
                         {
-                            TurnOff(correlationId);
+                            heater.TurnOff(correlationId);
                             NotifyWebUi(notificationEndpoint, false);
                         }
                     }
@@ -340,70 +348,16 @@ namespace businessrules
                     {
                         if (heaterStatus == HeaterStatus.OFF)
                         {
-                            TurnOn(correlationId);
+                            heater.TurnOn(correlationId);
                             NotifyWebUi(notificationEndpoint, true);
                         }
                     }
                 }
-                await Task.Delay(30000);//temperature is recorded at a freshness hertz of 60 seconds, check twice as frequently 
+                await Task.Delay(5000);//temperature is recorded at a freshness hertz of 60 seconds, check twice as frequently 
             }
-        }
+        }        
 
-
-        HeaterStatus TurnOn(string correlationId)
-        {
-            return HeaterCommunication(correlationId, "on");
-        }
-        HeaterStatus TurnOff(string correlationId)
-        {
-            return HeaterCommunication(correlationId, "off");
-        }
-        HeaterStatus Query(string correlationId)
-        {
-            return HeaterCommunication(correlationId, "query");
-        }
-
-        HeaterStatus Parse(string reply)
-        {
-            var jObject = JObject.Parse(reply);
-
-            if (jObject["heaterStatus"].Value<string>() == "ON")
-                return HeaterStatus.ON;
-            else if (jObject["heaterStatus"].Value<string>() == "OFF")
-                return HeaterStatus.OFF;
-
-            return HeaterStatus.UNKNOWN;
-            
-        }
-
-        private HeaterStatus HeaterCommunication(string correlationId, string action)
-        {
-            var subscriptionDesc = new SubscriptionDescription(_topicNameReceive, correlationId);
-            subscriptionDesc.DefaultMessageTimeToLive = TimeSpan.FromSeconds(30);
-            _namespaceMgr.CreateSubscription(subscriptionDesc, new CorrelationFilter(correlationId));
-
-            Trace.TraceInformation("Performing Heater Action: {0}", action);
-            _client.Send(CreateMessage(correlationId, action));
-
-            var receiveClient = _factory.CreateSubscriptionClient(_topicNameReceive, correlationId, ReceiveMode.ReceiveAndDelete);
-            var receiveMessage = receiveClient.Receive();
-
-            string s = receiveMessage.GetBody<string>();
-            Trace.TraceInformation("Heater Reports: {0}", s);
-
-            _namespaceMgr.DeleteSubscription(_topicNameReceive, correlationId);
-
-            return Parse(s);
-        }
-
-        static BrokeredMessage CreateMessage(string correlationId, string action)
-        {
-            var utf8String = "{ 'action' : '"+action+"' }";
-            BrokeredMessage message = new BrokeredMessage(new MemoryStream(Encoding.UTF8.GetBytes(utf8String)), true);
-            message.CorrelationId = correlationId;
-
-            return message;
-        } 
+        
         private async Task NotifyWebUi(string notificationEndpoint, bool isTurnedOn)
         {
             var jsonString = JObject.FromObject(new { EventTime = DateTime.Now, IsTurnedOn = isTurnedOn }).ToString();
@@ -415,4 +369,5 @@ namespace businessrules
         }
     }
 }
+
 ```

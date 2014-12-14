@@ -87,6 +87,7 @@
   <ItemGroup>
     <Compile Include="DataAccess\TemperatureReading.cs" />
     <Compile Include="DataAccess\TemperatureReadingContext.cs" />
+    <Compile Include="DeviceControl\HeaterCommunication.cs" />
     <Compile Include="HeaterStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorkerRole.cs" />
