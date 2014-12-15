@@ -1,0 +1,37 @@
+﻿using Newtonsoft.Json.Linq;
+using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using visualisations_web.Models;
+
+namespace visualisations_web.DataAccess
+{
+    public class CurrentEnergyContext
+    {
+        private ConnectionMultiplexer _connection;
+        public CurrentEnergyContext(string connectionString)
+        {
+            try
+            {
+                _connection = ConnectionMultiplexer.Connect(connectionString);
+            }
+            catch (Exception e)
+            { 
+            }
+        }
+
+        public EnergyMonitorReading[] GetReadings(string deviceId)
+        {
+            var database = _connection.GetDatabase();
+            var values = database.ListRange("20141211" + deviceId);
+
+            var readings = values.Select(t => JObject.Parse(t.ToString()).ToObject<EnergyMonitorReading>()).ToArray();
+
+            var groups = readings.GroupBy(r => r.timestamp.Hour).Select(t => t.Average(x => x.endReading));
+
+            return readings;
+        }
+    }
+}

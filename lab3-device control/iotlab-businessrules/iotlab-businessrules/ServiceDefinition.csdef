@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="iotlab_businessrules" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-06.2.4">
+  <WorkerRole name="businessrules" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <ConfigurationSettings>
+      <Setting name="ServiceBusConnectionString" />
+      <Setting name="TemperatureDbConnectionString" />
+      <Setting name="NotificationUri" />
+    </ConfigurationSettings>
+  </WorkerRole>
+</ServiceDefinition>

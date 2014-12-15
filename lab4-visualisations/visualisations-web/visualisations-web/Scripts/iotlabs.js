@@ -1,8 +1,24 @@
 ﻿$(function () {
 
     var heaterOn = false;
-    setInterval(function () {
-        heaterOn = !heaterOn;
+    $(".heaterOn").hide();
+    $(".heaterOff").fadeIn();
+
+    var energyMonitoringProxy = $.connection.energyMonitorHub;
+    energyMonitoringProxy.client.pump = function (readings) {
+        console.log(readings);
+        drawEnergyChart(readings);
+    };
+    var temperatureProxy = $.connection.temperatureHub;
+    temperatureProxy.client.pump = function (reading) {
+        console.log(reading);
+        updateTemperature(reading);
+    };
+
+    var heaterProxy = $.connection.heaterHub;
+    heaterProxy.client.notifyClient = function (status) {
+        console.log(status);
+        heaterOn = status.IsTurnedOn;
         if (heaterOn) {
             $(".heaterOff").hide();
             $(".heaterOn").fadeIn();
@@ -11,20 +27,18 @@
             $(".heaterOn").hide();
             $(".heaterOff").fadeIn();
         }
-    }, 5000);
-
-    var energyMonitoringProxy = $.connection.energyMonitorHub;
-    energyMonitoringProxy.client.pump = function (readings) {
-        console.log(readings);
-        drawEnergyChart(readings);
-    };
+    }
 
     $.connection.hub.start()
         .done(function () {
             console.log('Now connected, connection ID=' + $.connection.hub.id);
             energyMonitoringProxy.server.startReadingPump()
-                .done(function () { console.log('started pump'); })
-                .fail(function(e) { console.error(e) });
+                .done(function () { console.log('started pump for energy use'); })
+                .fail(function (e) { console.error(e) });
+
+            temperatureProxy.server.startReadingPump()
+                .done(function () { console.log('started pump for temperature'); })
+                .fail(function (e) { console.error(e) });
         })
         .fail(function () { console.log('Could not Connect!'); });
 
@@ -33,9 +47,10 @@
         var series = new Array(1);
         series[0] = { name: 'Device1', data: new Array(readings.length) };
         for (var i = 0; i < readings.length; i++) {
-            categories[i] = readings[i].ServerTimestamp;
-            series[0].data[i] = readings[i].Reading;
+            categories[i] = readings[i].timestamp;
+            series[0].data[i] = readings[i].endReading;
         }
+        console.log(series[0].data);
 
         $('#energyMonitorChart').highcharts({
             title: {
@@ -78,6 +93,12 @@
             },
             series: series
         });
+    }
+
+    var updateTemperature = function (temperatureReading)
+    {
+        $("#currentTemperature").text(temperatureReading.Temperature);
+        $("#temperatureUpdated").text(moment(temperatureReading.EndTime).fromNow())
     }
 
     $('#temperatureChart').highcharts({

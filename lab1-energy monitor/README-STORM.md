@@ -1,6 +1,6 @@
 ﻿# IoT Smart home Hackathon Lab #
 
-## Lab 2 Environmental Sensor ##
+## Lab 1 Real Time processing ##
 
 A Smart Home revolves around the idea that unattended sensors can report on ambient conditions in a home in the homeowners absence. A typical requirement for this is to measure the home environment and to react to this and work to alter the environment to the homeowners wishes. For instance, if the temperature drops below a threshold then a heating system may be activated.
 
@@ -87,6 +87,7 @@ To create the example follow these staps
 - Add the jar to the Maven repository using the following command
 
     `mvn install:install-file -Dfile=target\eventhubs-storm-spout-0.9-jar-with-dependencies.jar -DgroupId=com.microsoft.eventhubs -DartifactId=eventhubs-storm-spout -Dversion=0.9 -Dpackaging=jar`
+
 
 - Create a new Maven project
 
@@ -383,7 +384,7 @@ To create the example follow these staps
 
 ```java
 
-package com.hackathon.storm;
+	package com.hackathon.storm;
     
     import backtype.storm.topology.BasicOutputCollector;
     import backtype.storm.topology.OutputFieldsDeclarer;
