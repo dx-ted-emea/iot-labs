@@ -21,21 +21,21 @@ public class ParseBolt extends BaseBasicBolt  {
         String[] arr = value.split("}");
         for (String ehm : arr)
         {
-
             //Convert it from JSON to an object
             Message msg = new Gson().fromJson(ehm.concat("}"),Message.class);
 
             //Pull out the values and emit as a stream
             String timestamp = msg.timestamp;
             String deviceid = msg.deviceId;
-            int reading = msg.reading;
-
-            basicOutputCollector.emit("energystream", new Values(timestamp, deviceid, reading));
+            int startReading = msg.startReading;
+            int endReading = msg.endReading;
+            int energyUsage = msg.energyUsage;
+            basicOutputCollector.emit("energystream", new Values(timestamp, deviceid, startReading, endReading, energyUsage));
         }
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declareStream("energystream", new Fields("timestamp", "deviceid", "reading"));
+        outputFieldsDeclarer.declareStream("energystream", new Fields("timestamp", "deviceid", "startReading", "endReading", "energyUsage"));
     }
 }
