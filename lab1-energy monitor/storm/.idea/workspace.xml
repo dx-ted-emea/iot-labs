@@ -129,8 +129,8 @@
       <file leaf-file-name="EnergyReaderRedis.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/hackathon/storm/EnergyReaderRedis.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="3.456" vertical-offset="57" max-vertical-offset="2142">
-              <caret line="105" column="30" selection-start-line="0" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
+            <state vertical-scroll-proportion="-1.0702811" vertical-offset="924" max-vertical-offset="2142">
+              <caret line="23" column="26" selection-start-line="23" selection-start-column="26" selection-end-line="23" selection-end-column="26" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -347,7 +347,7 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../src/nodejs" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../../gazoob/ADAL/azure-activedirectory-library-for-java-master/src/samples/web-app-samples-for-adal4j" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
@@ -785,12 +785,12 @@
       <workItem from="1418038216163" duration="4771000" />
       <workItem from="1418217710817" duration="21714000" />
       <workItem from="1418406044945" duration="3529000" />
-      <workItem from="1418634353499" duration="1133000" />
+      <workItem from="1418634353499" duration="3815000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="76447000" />
+    <option name="totallyTimeSpent" value="79129000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="711" extended-state="6" />
@@ -1268,8 +1268,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/hackathon/storm/EnergyReaderRedis.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="3.456" vertical-offset="57" max-vertical-offset="2142">
-          <caret line="105" column="30" selection-start-line="0" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
+        <state vertical-scroll-proportion="-1.0702811" vertical-offset="924" max-vertical-offset="2142">
+          <caret line="23" column="26" selection-start-line="23" selection-start-column="26" selection-end-line="23" selection-end-column="26" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

@@ -13,9 +13,10 @@ client.on('connect', function () {
     while(true)
     {
         baseReading += Math.floor( Math.random() * ( 1 + 10 - 0 ) ) + 0
+        var deviceID = Math.floor( Math.random() * ( 1 + 3 - 0 ) ) + 0
         var now = new Date()
         var obj = {timestamp: now,
-            deviceId : "DeviceId",
+            deviceId : "DeviceId" + deviceID,
             reading : baseReading};
 
         var payload = JSON.stringify(obj)
