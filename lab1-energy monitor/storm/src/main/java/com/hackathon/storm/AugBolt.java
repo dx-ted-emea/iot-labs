@@ -18,16 +18,18 @@ public class AugBolt extends BaseBasicBolt {
 
         String timestamp = tuple.getStringByField("timestamp");
         String deviceid = tuple.getStringByField("deviceid");
-        int reading = tuple.getIntegerByField("reading");
+        int startReading = tuple.getIntegerByField("startReading");
+        int endReading = tuple.getIntegerByField("endReading");
+        int energyUsage = tuple.getIntegerByField("energyUsage");
 
         DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
         String servertimestamp = targetFormat.format(new Date());
 
-        basicOutputCollector.emit("energystream", new Values(timestamp, deviceid, reading, servertimestamp));
+        basicOutputCollector.emit("energystream", new Values(timestamp, deviceid, startReading, endReading, energyUsage, servertimestamp));
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declareStream("energystream", new Fields("timestamp", "deviceid", "reading", "servertimestamp"));
+        outputFieldsDeclarer.declareStream("energystream", new Fields("timestamp", "deviceid", "startReading", "endReading", "energyUsage", "servertimestamp"));
     }
 }

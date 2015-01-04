@@ -87,21 +87,50 @@ namespace IotEventHubBatchingWorker
                 {
                     var receiver = @group.CreateReceiver(id);
 
+                    var messageBuffer = new List<string>();
+
+                    var startTime = DateTime.UtcNow;
+
                     while (true)
                     {
                         try
                         {
                             //read the message
                             var message = receiver.Receive();
+
+                            if (message == null)
+                                continue;
+
                             var body = Encoding.UTF8.GetString(message.GetBytes());
 
-                            //upload a blob
-                            var now = DateTime.Now;
-                            CloudBlockBlob blockBlob = container.GetBlockBlobReference(String.Format("{0}/{1}/{2}/message_{3}_{4}.log", now.Year, now.Month, now.Day, id, now.TimeOfDay));
-                            blockBlob.UploadFromStream(new MemoryStream(Encoding.UTF8.GetBytes(body)));
+                            if (body == null)
+                                continue;
+
+                            var currentTime = DateTime.UtcNow;
+
+                            //add to the buffer
+                            messageBuffer.Add(body);
+
+                            //write out a file if a minute has passed and we have at least one message
+                            if ((currentTime - startTime).TotalMinutes >= 5 && messageBuffer.Count >= 1)
+                            {
+                                var now = DateTime.Now;
+                                var asString = String.Join("\n", messageBuffer);
+
+                                //upload the blob
+                                var blockBlob = container.GetBlockBlobReference(String.Format("{0}/{1}/{2}/message_{3}_{4}.log", now.Year, now.Month, now.Day, id, now.TimeOfDay));
+                                blockBlob.UploadFromStream(new MemoryStream(Encoding.UTF8.GetBytes(asString)));
+
+                                //clear the buffer
+                                messageBuffer.Clear();
+
+                                //start tracking anew
+                                startTime = currentTime;
+                            }
                         }
-                        catch
+                        catch (Exception e)
                         {
+                            Console.WriteLine(e.Message);
                             //suppress for simplicity
                         }
                     }
