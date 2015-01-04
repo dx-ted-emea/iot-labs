@@ -185,3 +185,13 @@ The final step now is to expose this model so that it can be consumed from a ser
 Now we can set both the published inputs and outputs by clicking on the right hand input of **Assign To Clusters** and selecting "Set as Published Input". Similarly we can right click on the output and select "Set as Published Output". Now we just need to press **Run** on the bottom menu and when this completes we should have a new button available to us **PUBLISH WEB SERVICE**
 
 This should only take a few seconds to complete and will take us to a new page which will show us how we can consume the web service to send single temperature points to determine the clusters.
+
+You should be able to see a web service in the ML Studio portal now.
+
+![The new web service](web%20service.png)
+
+Clicking on the web service will reveal details of how to invoke them using either C#, Python or R. We should be able to lift the entire code section for C# and add this to a worker role which will process a set of data points returned from a SQL query that has been processed by Stream Analytics. Each row temperature can then be sent to the web service after being requested on every minute on a timer.
+
+To check whether the web service is processing and giving us the correct outputs we can click on the **test** link which will give us a dialog enabling us to enter a temperature value.
+
+![Test a temperature prediction cluster](predict%20and%20test%20with%20ml.png)
