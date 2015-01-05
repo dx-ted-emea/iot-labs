@@ -25,7 +25,7 @@ namespace visualisations_web.Hubs
         {
             var deviceId = "DeviceId";
 
-            var connectionString = ConfigurationManager.ConnectionStrings["EnergyDb"].ConnectionString;
+            var connectionString = ConfigurationManager.ConnectionStrings["EnergyRedis"].ConnectionString;
             using (AverageEnergyUsageContext ctx = new AverageEnergyUsageContext(connectionString))
             {
                 return ctx.Averages.Where(t => t.DeviceId == deviceId).OrderBy(t => t.HourOfDay).ToArray();
