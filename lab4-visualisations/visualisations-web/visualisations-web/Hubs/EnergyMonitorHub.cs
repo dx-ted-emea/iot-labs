@@ -14,7 +14,7 @@ namespace visualisations_web.Hubs
         static Dictionary<string, RedisReader<EnergyMonitorHub>> runningTasks = new Dictionary<string, RedisReader<EnergyMonitorHub>>();
 
         public void StartReadingPump() {
-            var deviceId = "DeviceId";
+            var deviceId = "Device01";
             Groups.Add(Context.ConnectionId, deviceId);
             
             if (!runningTasks.ContainsKey(deviceId))

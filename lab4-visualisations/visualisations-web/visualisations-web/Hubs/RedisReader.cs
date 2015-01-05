@@ -20,11 +20,12 @@ namespace visualisations_web.Hubs
 
         private async Task Run(string deviceId)
         {
-            var energyCtx = new CurrentEnergyContext("stormredis.redis.cache.windows.net,ssl=true,password=ew8x0rcmtZYhSYNPqPTwnTroSJTMSuHhzyv/X5iQsXs=");
+            var energyRedis = ConfigurationManager.ConnectionStrings["EnergyDb"].ConnectionString;
+            var energyCtx = new CurrentEnergyContext(energyRedis);
             
             while (true)
             {
-                var readings = energyCtx.GetReadings("Device01");
+                var readings = energyCtx.GetReadings(deviceId);
                 _hubContext.Clients.Group(deviceId).pump(readings);
 
                 await Task.Delay(1000);

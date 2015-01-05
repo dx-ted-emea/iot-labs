@@ -37,6 +37,8 @@ namespace businessrules_fieldgateway_simulator_console
                 Console.WriteLine("Waiting for messages");
                 var receiveMessage = subscriptionClient.Receive();
 
+                if (receiveMessage == null) continue;
+                    
                 Stream ms = receiveMessage.GetBody<Stream>();
                 var s = new StreamReader(ms).ReadToEnd();
                 var correlationId = receiveMessage.CorrelationId;

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure;
 using System.Diagnostics;
+using Newtonsoft.Json.Linq;
 
 namespace businessrules.AzureML
 {
@@ -48,7 +49,7 @@ namespace businessrules.AzureML
                     {
                         {"temperature", temperature.ToString()},
                     },
-                        GlobalParameters = new Dictionary<string, string>()
+                        GlobalParameters = new Dictionary<string, string>() { }
 
                     };
 
@@ -68,7 +69,10 @@ namespace businessrules.AzureML
                     if (response.IsSuccessStatusCode)
                     {
                         string result = await response.Content.ReadAsStringAsync();
-                        return int.Parse(result) == 0;
+                        
+                        var array = JArray.Parse(result);
+
+                        return array.Last.Value<int>() == 0;
                     }
                 }
             }
