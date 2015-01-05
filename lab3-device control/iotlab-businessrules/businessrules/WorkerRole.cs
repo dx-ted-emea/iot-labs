@@ -66,7 +66,7 @@ namespace businessrules
             var temperatureDbConnectionString = CloudConfigurationManager.GetSetting("TemperatureDbConnectionString");
             var notificationEndpoint = CloudConfigurationManager.GetSetting("NotificationUri");
             var heater = new HeaterCommunication();
-            var temperatureSensor = new DeviceReliabilityServiceClient();
+            var temperatureSensor = new DeviceReliabilityServiceClient(DeviceReliabilityServiceClient.FailAction.Reliable);
 
             while (true)
             {
@@ -81,6 +81,7 @@ namespace businessrules
                 {
                     //get the most recent entry
                     var tempReading = temperatureDb.Readings.OrderByDescending(t=>t.StartTime).First();
+
                     // Call AzureML to determine whether the temperature reading is in an acceptable range
                     var reliable = await temperatureSensor.IsDeviceReliable(correlationId, tempReading.Temperature);
                     
