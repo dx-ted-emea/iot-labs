@@ -10,19 +10,23 @@ When the database is created as per the earlier labs. Ensure that you enable a f
 
 The following SQL can be used.
 
-`CREATE TABLE dbo.avgdevicereadings
+```sql
+CREATE TABLE dbo.avgdevicereadings
 (
 	starttime DATETIME not null,
 	endtime DATETIME not null,
 	deviceid VARCHAR not null,
 	temperature FLOAT not null,
 	eventcount INT not null
-)`   
+)
+```
 
 Add a clustered index as each WASD table should have one.
 
-`CREATE CLUSTERED INDEX ix_avgdevicereadings_deviceid 
-    ON dbo.avgdevicereadings (deviceid)`
+```sql
+CREATE CLUSTERED INDEX ix_avgdevicereadings_deviceid 
+    ON dbo.avgdevicereadings (deviceid)
+```
 
 We're going to use the event hub to relay messages from the devices and consume them through Streaming Analytics, a new Microsoft Azure technology to enable Complex Event Processing (CEP). So we'll read from the Event Hub transform the on-the-wire messages using Streaming Analytics and place the aggregated outputs into a Windows Azure SQL Database.
 
@@ -32,7 +36,9 @@ We need to create an Event Hub now within a service bus namespace which will be 
 
 Inevitably we'll be sending JSON messages from the device which look like this:
 
-`{"device_id": "", "temperature": 21.2, "timestamp": "dd/mm/yyyy hh:MM:ss"}`
+```javascript
+{"device_id": "", "temperature": 21.2, "timestamp": "dd/mm/yyyy hh:MM:ss"}
+```
 
 To begin now we'll create a Streaming Analytics job using the Azure Portal:
 
@@ -72,9 +78,11 @@ From the dropdown you'll select the database from your subscription and acknowle
 
 After both our inputs/outputs are configured we'll have to tell Stream Analytics to do something. In this case we're going to need to track every message over a 1 minute window for a particular device and count the number of events and average temperature across that minute. In order to do the aggregation we'll navigate to the "query" tab and enter the following which will do the transformation.
 
-`SELECT DateAdd(minute,-1,System.TimeStamp) as starttime, system.TimeStamp as endtime, deviceid, Avg(temperature) as temperature, Count(*) as eventcount 
+```sql
+SELECT DateAdd(minute,-1,System.TimeStamp) as starttime, system.TimeStamp as endtime, deviceid, Avg(temperature) as temperature, Count(*) as eventcount 
 FROM input
-GROUP BY TumblingWindow(minute, 1), DeviceId`
+GROUP BY TumblingWindow(minute, 1), DeviceId
+```
 
 This will ensure that all deviceid details will be aggregated on a 1 minute basis. In this instance there may be something in the order of hundreds of messages in the eventcount field in a particular row. The temperature of sensor will be averaged over that period.
 
@@ -93,7 +101,8 @@ The test harness generates a set of eventhub messages simulating devices issuing
 
 If you look in the Program.cs file you will see the following structure which enables the sending of messages per a set of rules. A description of this is below and can be customised to generate the correct ruleset.
 
-`var deviceDetails = new DeviceSendingDetails()
+```csharp
+var deviceDetails = new DeviceSendingDetails()
 {
 	FailureConditions = new[] {new FailedDeviceSettings(3, 0.1F)},
     IterationSeconds = 30,
@@ -101,7 +110,8 @@ If you look in the Program.cs file you will see the following structure which en
     TemperatureMax = 28.9F,
     TemperatureMin = 19.6F,
     MillisecondDelay = 1000
-};`
+};
+```
 
 
 
