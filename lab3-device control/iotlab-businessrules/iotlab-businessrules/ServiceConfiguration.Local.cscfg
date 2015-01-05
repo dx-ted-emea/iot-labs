@@ -7,6 +7,8 @@
       <Setting name="ServiceBusConnectionString" value="Endpoint=sb://iotlabs.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=v2vGRS15kRoeZhb++6M77BS7IplSXCdvMfZnfrwP97M=" />
       <Setting name="TemperatureDbConnectionString" value="Server=tcp:lf9oqmipe1.database.windows.net,1433;Database=temperaturedb;User ID=azurecoder@lf9oqmipe1;Password=M!crosoft123;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;" />
       <Setting name="NotificationUri" value="http://localhost:8965/api/notification" />
+      <Setting name="AzureMLEndpoint" value="https://ussouthcentral.services.azureml.net/odata/workspaces/2503fddba20a4d86854828bfe7fbda24/services/548d7d9ae5e249d19e594f8940cc3577/score" />
+      <Setting name="AzureMLApiKey" value="YA3EPPvvfk5wM7c1jI+Rp56zFnl8t5BFslorkQsfF4XIfqSL0mPaNce8wh1YB/hwLZCDihNQ6Ks4Oa5L47GkHQ==" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>
