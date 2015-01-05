@@ -75,6 +75,7 @@ namespace businessrules
                 var heaterStatus = heater.Query(correlationId);
                 if (heaterStatus == HeaterStatus.UNKNOWN)
                 {
+                    Trace.TraceInformation("The Heater is in an unknown state. Looping to retry acquisition of device status");
                     continue;
                 }
                 using (TemperatureReadingContext temperatureDb = new TemperatureReadingContext(temperatureDbConnectionString))
@@ -87,6 +88,7 @@ namespace businessrules
                     
                     if (!reliable)
                     {
+                        Trace.TraceInformation("The Temperature reading of {0} is outside the ML calculated cluster of accuracy. Looping to await a different reading.", tempReading.Temperature);
                         continue;
                     }
 
