@@ -64,7 +64,6 @@ namespace businessrules
         {
             var temperatureDbConnectionString = CloudConfigurationManager.GetSetting("TemperatureDbConnectionString");
             var notificationEndpoint = CloudConfigurationManager.GetSetting("NotificationUri");
-
             var heater = new HeaterCommunication();
 
             while (true)
