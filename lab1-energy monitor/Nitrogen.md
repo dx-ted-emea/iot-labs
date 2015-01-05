@@ -1,4 +1,4 @@
-# Cloud Gateway (nitrogen.io) #
+﻿# Cloud Gateway (nitrogen.io) #
 
 The reality of real world devices is that most are often intermittently connected to the network. This might be because they are battery powered, because they are in motion and out of network coverage, or because they rely on another device for network access, but in the end, for a large class of devices, you can’t assume constant connectivity.
 
@@ -15,6 +15,21 @@ In this example we will be making use of the MQTT bridge allows lower capability
 - create an account at [http://nitrogen.io](http://nitrogen.io)
 - Create a Linux VM in Azure (Ubuntu)
 - Create an endpoint for port 1883 on the created VM
+
+**Event Hub**
+-
+
+Event Hubs is a highly scalable publish-subscribe ingestor that can intake millions of events per second so that you can process and analyse the massive amounts of data produced by your connected devices and applications. Once collected into Event Hubs, you can transform and store data using any real-time analytics provider or with batching/storage adapters.  The Event Hub will recieve json enconded messages from he Gateway and will be used for both real-time processing via storm and batch based processing via HDInsight/Hadoop.
+
+The following describes the steps to configure an Event Hub to which we can send messages (and consume them)
+
+1. Login to the Azure Portal
+2. Navigate to Service Bus and create a new instance
+3. Under Event Hubs, create a new instance
+4. Once complete navigate to Configure tab
+5. Create a new Shared Access Policy and set permissions to Manage, Send, Listen
+6. Save the updated configuration
+7. Copy the Policy Name and Primary Key after the Save has completed.  These details will be required to connect to the Event Hub.
 
 ## Create the files ##
 
@@ -275,7 +290,7 @@ Now we have the files we need, the server VM should be configured so it can run 
 
 - Execute command, copy the resulting **ACCESS TOKEN**
 
-    n2 principal accesstoken <ID>
+    n2 principal accesstoken <id>
 
 - The ID and ACCESS TOKEN are used as credentials when authenticating to the server.  
 - Edit config.js

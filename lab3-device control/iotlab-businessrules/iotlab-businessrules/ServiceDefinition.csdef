@@ -8,6 +8,8 @@
       <Setting name="ServiceBusConnectionString" />
       <Setting name="TemperatureDbConnectionString" />
       <Setting name="NotificationUri" />
+      <Setting name="AzureMLEndpoint" />
+      <Setting name="AzureMLApiKey" />
     </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>

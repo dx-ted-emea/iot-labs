@@ -20,7 +20,7 @@
     "mqtt": "0.3.11",
     "nitrogen": "~0.2",
     "nitrogen-memory-store": "~0.2.0",
-    "moment": "~0.3.0"
+    "moment": "2.8.4"
   },
   "devDependencies": {
     "async" : "latest"

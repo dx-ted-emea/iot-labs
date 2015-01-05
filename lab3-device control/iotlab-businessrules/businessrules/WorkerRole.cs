@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using businessrules.AzureML;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using System.Text;
@@ -65,6 +66,7 @@ namespace businessrules
             var temperatureDbConnectionString = CloudConfigurationManager.GetSetting("TemperatureDbConnectionString");
             var notificationEndpoint = CloudConfigurationManager.GetSetting("NotificationUri");
             var heater = new HeaterCommunication();
+            var temperatureSensor = new DeviceReliabilityServiceClient();
 
             while (true)
             {
@@ -79,6 +81,13 @@ namespace businessrules
                 {
                     //get the most recent entry
                     var tempReading = temperatureDb.Readings.OrderByDescending(t=>t.StartTime).First();
+                    // Call AzureML to determine whether the temperature reading is in an acceptable range
+                    var reliable = await temperatureSensor.IsDeviceReliable(correlationId, tempReading.Temperature);
+                    
+                    if (!reliable)
+                    {
+                        continue;
+                    }
 
                     if (tempReading.Temperature >= 22)
                     {
