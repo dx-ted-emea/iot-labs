@@ -14,7 +14,7 @@ namespace visualisations_web.Hubs
         static Dictionary<string, RedisReader<EnergyMonitorHub>> runningTasks = new Dictionary<string, RedisReader<EnergyMonitorHub>>();
 
         public void StartReadingPump() {
-            var deviceId = "DeviceId";
+            var deviceId = "Device01";
             Groups.Add(Context.ConnectionId, deviceId);
             
             if (!runningTasks.ContainsKey(deviceId))
@@ -25,7 +25,7 @@ namespace visualisations_web.Hubs
         {
             var deviceId = "DeviceId";
 
-            var connectionString = ConfigurationManager.ConnectionStrings["EnergyDb"].ConnectionString;
+            var connectionString = ConfigurationManager.ConnectionStrings["EnergyRedis"].ConnectionString;
             using (AverageEnergyUsageContext ctx = new AverageEnergyUsageContext(connectionString))
             {
                 return ctx.Averages.Where(t => t.DeviceId == deviceId).OrderBy(t => t.HourOfDay).ToArray();

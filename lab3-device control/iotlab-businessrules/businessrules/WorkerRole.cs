@@ -65,9 +65,8 @@ namespace businessrules
         {
             var temperatureDbConnectionString = CloudConfigurationManager.GetSetting("TemperatureDbConnectionString");
             var notificationEndpoint = CloudConfigurationManager.GetSetting("NotificationUri");
-
             var heater = new HeaterCommunication();
-            var temperatureSensor = new DeviceReliabilityServiceClient();
+            var temperatureSensor = new DeviceReliabilityServiceClient(DeviceReliabilityServiceClient.FailAction.Reliable);
 
             while (true)
             {
@@ -76,17 +75,20 @@ namespace businessrules
                 var heaterStatus = heater.Query(correlationId);
                 if (heaterStatus == HeaterStatus.UNKNOWN)
                 {
+                    Trace.TraceInformation("The Heater is in an unknown state. Looping to retry acquisition of device status");
                     continue;
                 }
                 using (TemperatureReadingContext temperatureDb = new TemperatureReadingContext(temperatureDbConnectionString))
                 {
                     //get the most recent entry
                     var tempReading = temperatureDb.Readings.OrderByDescending(t=>t.StartTime).First();
+
                     // Call AzureML to determine whether the temperature reading is in an acceptable range
                     var reliable = await temperatureSensor.IsDeviceReliable(correlationId, tempReading.Temperature);
                     
                     if (!reliable)
                     {
+                        Trace.TraceInformation("The Temperature reading of {0} is outside the ML calculated cluster of accuracy. Looping to await a different reading.", tempReading.Temperature);
                         continue;
                     }
 

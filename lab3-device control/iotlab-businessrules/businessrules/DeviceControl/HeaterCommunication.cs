@@ -54,8 +54,9 @@ namespace businessrules.DeviceControl
 
             var receiveClient = _factory.CreateSubscriptionClient(_topicNameReceive, correlationId, ReceiveMode.ReceiveAndDelete);
             var receiveMessage = receiveClient.Receive();
-
-            string s = receiveMessage.GetBody<string>();
+            
+            Stream ms = receiveMessage.GetBody<Stream>();
+            var s = new StreamReader(ms).ReadToEnd();
             Trace.TraceInformation("Heater Reports: {0}", s);
 
             _namespaceMgr.DeleteSubscription(_topicNameReceive, correlationId);
