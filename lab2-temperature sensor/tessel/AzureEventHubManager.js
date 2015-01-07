@@ -44,11 +44,10 @@ AzureEventHubManager.prototype = {
             }
         };
     },
-    sendMessage : function(payload, devicename)
+    sendMessage : function(payload, devicename, sas)
     {
         var uri = 'https://' + this.namespace + '.servicebus.windows.net' + '/' + this.hubname + '/publishers/' + devicename + '/messages';
 
-        var sas = this.create_sas_token(uri);
         var options = this.getOptions(sas, payload, devicename);
 
         var req = https.request(options, function(res) {
