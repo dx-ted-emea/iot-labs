@@ -1,6 +1,6 @@
 # IoT Smart home Hackathon Lab #
 
-## Lab 2 Environmental Sensor ##
+## Lab 1 Environmental Sensor ##
 
 A Smart Home revolves around the idea that unattended sensors can report on ambient conditions in a home in the homeowners absence. A typical requirement for this is to measure the home environment and to react to this and work to alter the environment to the homeowners wishes. For instance, if the temperature drops below a threshold then a heating system may be activated.
 
@@ -8,7 +8,7 @@ In order to implement this, it is possible to take consumer equipment and combin
 
 ### Architecture ###
 
-Here an overview of the Lab2; (Arduino->)Tessel->EventHub->BusinessLogic
+Here an overview of the Lab1; (Arduino->)Tessel->EventHub->BusinessLogic
 
 # Building an Environment Sensor #
 
@@ -42,7 +42,7 @@ The design of the Tessel is modular and it is a simple way of adding capabilitie
 
 ![](tessel-climate-1.png)
 
-This approach makes electrical engineering possible without needing to solder or build circuits yourself, but if you agree with the author that the joy of IoT is creativity, the expression of creativity is to make rather than consume, explore the lower level [Lab 2.1, Arduino](Lab2.1-Arduino.md) chaining. 
+This approach makes electrical engineering possible without needing to solder or build circuits yourself, but if you agree with the author that the joy of IoT is creativity, the expression of creativity is to make rather than consume, explore the lower level [Lab 1.1, Arduino](Lab1.1-Arduino.md) chaining. 
 
 # Writing a Tessel based Environment Sensor #
 
@@ -88,8 +88,6 @@ setInterval(function(){}, 20000);
 So far we have replicated the base function of the Tessel with the Climate module. What we should do now is use this data for something interesting and invoke a remote endpoint hosted in the Cloud with a payload based on the reading that we have just started to receive.
 
 ## Event Hubs and Azure ##
-
-[question; detail here or refer back to earlier lab1 example?]
 
 [Here detail how to use Event Hub with nodejs/tessel] 
 

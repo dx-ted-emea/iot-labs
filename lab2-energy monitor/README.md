@@ -1,6 +1,6 @@
 # IoT Smart home Hackathon Lab #
 
-## Lab 1 Energy Monitoring ##
+## Lab 2 Energy Monitoring ##
 
 Monitoring Energy is a key objective of the Smart home. In this lab we will take messages from a Smart Home, process them using Cloud resources and provide an interface to visualise these in a web browser.
 
@@ -14,6 +14,9 @@ Technology that we will use includes:
 	- **Apache Storm** for stream processing
 - **Azure SQL DB** to provide a relational data store
 - **Azure Redis Cache** to provide a managed transient data store
+
+Following this, the Lab4-Visualisations provides
+
 - **Azure Websites** to provide a website host, that features
 	- **ASP.NET** to provide a web application framework 
 	- **SignalR** to provide real time communication with browsers
