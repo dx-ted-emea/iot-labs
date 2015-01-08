@@ -109,3 +109,9 @@ Lab 3 introduces an additional piece of state that is held by the system and nev
 The state of the heater may change by the operation of the system, but since it is never persisted to a data store, there is no way for the web visualisation to gain access to it. Instead the web visualisation exposes a HTTP endpoint that can receive a message from the Lab 3 code which communicates the current status every time it is measured. 
 
 The SignalR hub will react to the HTTP message from the Lab 3 code and modify the display to show the status of the Heater.
+
+### Implementing our Data Driven Page
+
+The approach taken by this visualisation is as a Single Page Application (SPA); replacing the need for the user to interact with the page and use mouse events to navigate to between items of note with a persistent, always on dashboard that updates itself. There are many SPA oriented frameworks available that allow for complex SPAs to be build, but in this case we will keep things simple and just use Javascript, JQuery, Highcharts and HTML. 
+
+
