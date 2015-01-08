@@ -256,7 +256,7 @@ The Field Gateway receives messages via AMQP and when it replies it uses the cor
 
 The Cloud Service could embody multiple strategies for determining reliability of temperature reading. The core goal is that the system should not, on a wildly unusual reading, act in an inappropriate manner. For instance, if the temperature has been steadily at 18 &deg;C and the heater has been correctly activated but a new reading arrives at 180 &deg;C; the system should not immediately turn the heater off, but instead should treat the reading as suspect and take no action. Possible strategies for this include keeping a time series of values and calculating a delta or negating any outside a broad range of acceptable values. Both of these can prove brittle in certain circumstances and a design goal for all IoT solutions has to be that human interaction on the individual device level (altering thresholds for misbehaving devices) must be kept to a minimum. The IoT is comprised of billions of devices and its control needs to be automated in order to be successful. 
 
-This lab will focus on the use of AzureML to use Machine Learning to achieve clustering of device reading in order to determine individual reading likelihood of failure. 
+To find out more about how the Azure ML is put together; visit [Lab 3.1 Device Reliability](DeviceReliability.md)
 
 ```csharp
 using System;
