@@ -31,7 +31,7 @@ What we really want is a single view grid of the state of our system. If we spli
 
 We can build a simple, single view of data using HTML5 using [Bootstrap](https://github.com/twbs/bootstrap) in order to ease our UI concerns. Bootstrap lends itself to quickly building this type of UI.
 
-![](dashboard1.png)
+![](images/dashboard1.png)
 
 ### Scaffold a UI Project ###
 
@@ -123,5 +123,5 @@ We can break up our dashboard into areas of function. These are:
 
 In order to build this, we will add an index.html page, and use a bootstrap grid layout to build the UI areas in a 2x2 grid;
 
-![](dashboard-contents.png)
+![](images/dashboard-contents.png)
 
