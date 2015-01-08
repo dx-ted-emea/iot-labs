@@ -123,5 +123,5 @@ We can break up our dashboard into areas of function. These are:
 
 In order to build this, we will add an index.html page, and use a bootstrap grid layout to build the UI areas in a 2x2 grid;
 
-
+![](dashboard-contents.png)
 
