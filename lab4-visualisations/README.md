@@ -37,23 +37,23 @@ We can build a simple, single view of data using HTML5 using [Bootstrap](https:/
 
 Starting with a vanilla ASP.NET project in Visual Studio (screenshots in this lab are Ultimate 2013), select an Empty Project.
 
-![](projectscreenshots/newproject1.png)
+![](images/newproject1.png)
 
-![](projectscreenshots/newproject2.png)
+![](images/newproject2.png)
 
 This gives us a new empty project. 
 
-![](projectscreenshots/newproject3.png)
+![](images/newproject3.png)
 
 We will start by adding the dependencies we need; using Nuget to add Bootstrap and SignalR:
 
-![](projectscreenshots/newproject4.png)
+![](images/newproject4.png)
 
-![](projectscreenshots/newproject5.png)
+![](images/newproject5.png)
 
 Once these are installed, we have a project structure that contains all the basic elements that we need.
 
-![](projectscreenshots/newproject6.png)
+![](images/newproject6.png)
 
 Now we need to create a few files that are specific to our application
 
