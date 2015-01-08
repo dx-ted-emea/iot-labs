@@ -20,7 +20,7 @@ namespace visualisations_web.Hubs
 
         private async Task Run(string deviceId)
         {
-            var energyRedis = ConfigurationManager.ConnectionStrings["EnergyDb"].ConnectionString;
+            var energyRedis = ConfigurationManager.ConnectionStrings["EnergyRedis"].ConnectionString;
             var energyCtx = new CurrentEnergyContext(energyRedis);
             
             while (true)

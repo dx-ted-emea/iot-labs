@@ -112,6 +112,16 @@ The SignalR hub will react to the HTTP message from the Lab 3 code and modify th
 
 ### Implementing our Data Driven Page
 
-The approach taken by this visualisation is as a Single Page Application (SPA); replacing the need for the user to interact with the page and use mouse events to navigate to between items of note with a persistent, always on dashboard that updates itself. There are many SPA oriented frameworks available that allow for complex SPAs to be build, but in this case we will keep things simple and just use Javascript, JQuery, Highcharts and HTML. 
+The approach taken by this visualisation is as a Single Page Application (SPA); replacing the need for the user to interact with the page and use mouse events to navigate to between items of note with a persistent, always on dashboard that updates itself. There are many SPA oriented frameworks available that allow for complex SPAs to be build, but in this case we will keep things simple and just use Javascript, [JQuery](http://jquery.com), [Highcharts](http://www.highcharts.com/) and HTML. 
+
+We can break up our dashboard into areas of function. These are:
+
+1. Current Temperature
+2. Average Temperature Chart
+3. Recent Energy Usage Chart
+4. Heater Status
+
+In order to build this, we will add an index.html page, and use a bootstrap grid layout to build the UI areas in a 2x2 grid;
+
 
 
