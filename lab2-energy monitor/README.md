@@ -39,6 +39,16 @@ Furthermore, simply receiving messages is insufficient to meet the challenges of
 
 This Key Challenge is implemented through the use of [Storm with HDInsight](README-STORM.md)
 
+### Key Challenge 3 - Scalable Data Processing 
+
+Following on over a history of millions of M2M messages, any accrued data is likely to be of large size. Existing examples of M2M, IoT origin data stores are measured in petabytes. 
+
+In order to process this, a scalable data processing platform can significantly reduce the complexity of managing runtime operations over such a large amount of data. Typical approaches to scalable data processing involve breaking down jobs into smaller tasks, distributing these tasks across multiple machines and then gathering the results of these tasks into a single overall result.
+
+Such a framework, Hadoop, can be utilised on Azure through the HDInsight service. 
+
+More of how to achieve this can be found in [HIVE](HIVE.md).
+
 ## Following on ##
 
 The results of the message ingestion and processing can be visualised in Lab 4.
