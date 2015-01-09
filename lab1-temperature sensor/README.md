@@ -34,6 +34,11 @@ The Sensor Control Device can be constructed in many forms; popular choices incl
 
 In this lab we will be using a Tessel, which allows the software developer to write their software in Javascript via Nodejs. This convergence of the low level electronics programming with higher level, popular programming languages is common in modern hobbyist hardware development as it allows hardware vendors to target large audiences. 
 
+#### Discussion Point
+
+> There are many devices coming to market that are not listed here. Important factors for choosing are form factor; cost per unit; ease of development; cost to manufacture; ease of building custom boards based on identical software and required changes; ease of access to components especially with prefabricated modules (i.e. for Tessel). An interesting discussion is to rank these devices based on these criteria.
+
+
 ### External Environment Sensor ###
 
 This lab continues on with a basic approach to using the Tessel; using the available modules to determine the temperature using the [**Si7005**](http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7005.pdf) based [Climate module](https://tessel.io/docs/climate) for the Tessel. 
@@ -42,7 +47,10 @@ The design of the Tessel is modular and it is a simple way of adding capabilitie
 
 ![](tessel-climate-1.png)
 
-This approach makes electrical engineering possible without needing to solder or build circuits yourself, but if you agree with the author that the joy of IoT is creativity, the expression of creativity is to make rather than consume, explore the lower level [Lab 1.1, Arduino](Lab1.1-Arduino.md) chaining. 
+#### Discussion Point
+
+>This approach makes electrical engineering possible without needing to solder or build circuits yourself, but if you agree with the author that the joy of IoT is creativity, the expression of creativity is to make rather than consume, explore the lower level [Lab 1.1, Arduino](Lab1.1-Arduino.md) chaining. 
+
 
 # Writing a Tessel based Environment Sensor #
 

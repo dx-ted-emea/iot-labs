@@ -10,6 +10,11 @@ This single view is implemented as a HTML5 website, using javascript in the brow
 
 This lab will use the ASP.NET web development stack and in order to achieve a user experience that delivers data driven content with low latency, matching the real time nature of the data, we will be using ASP.NET SignalR for real time message delivery.
 
+#### Discussion Point
+
+>Instead of ASP.NET SignalR, which other technologies would suit? How would we do this with node.js? 
+
+
 ### Choosing real time data points ###
 
 It is an important exercise to undertake to choose data points that are suited to real time messaging between web client and server. The more aspects of real time interaction that we introduce to the visualisation website, the higher the overall load we place on the remote web server. Furthermore, the we must choose data points intelligently; if we make the web server work to continually refresh data points that are static, we waste capacity across our system. 
@@ -136,3 +141,40 @@ The second approach is DOM manipulation, using JQuery to modify the loaded docum
 ## Code for Visualisation
 
 The code for visualisation is in the ~/Scripts/iotlabs.js
+
+### SignalR data transfer
+
+ASP.NET SignalR is used to send messages from the server to the client and update the html page without the user having to interact with it. The approach for this is for the client to create a function that the SignalR hub can call, connect to SignalR with the SignalR Client and then use c# in ASP.NET SignalR to issue events. These events call back into the function that we earlier created and the javascript can take over responsibility of drawing data contained by the event onto the screen.
+
+*Creating a Javascript client function for SignalR to invoke*
+
+```javascript
+var energyMonitoringProxy = $.connection.energyMonitorHub;
+    energyMonitoringProxy.client.pump = function (readings) {
+        console.log(readings);
+        drawEnergyChart(readings);
+    };
+```
+
+
+*Using SignalR to invoke the function*
+
+```csharp
+private async Task Run(string deviceId)
+        {
+            var energyRedis = ConfigurationManager.ConnectionStrings["EnergyRedis"].ConnectionString;
+            var energyCtx = new CurrentEnergyContext(energyRedis);
+            
+            while (true)
+            {
+                var readings = energyCtx.GetReadings(deviceId);
+                _hubContext.Clients.Group(deviceId).pump(readings);
+
+                await Task.Delay(1000);
+            }
+        }
+```
+
+#### Discussion Point
+
+> In the above SignalR, the server invokes clients that belong to a "Group" of the DeviceId. How would you modify the UI and server to allow multiple energy monitors to be enabled? For instance, how would you extend this to support a smart house with multiple rooms having energy monitored separately?
