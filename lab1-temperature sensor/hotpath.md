@@ -137,3 +137,7 @@ Most of the generated messages will average to 24 degree or thereabouts in Strea
 For this lab, **FailureConditions** represents an important part of the design. We'll be using this value to inform a machine learning algorithm whether the device is failing by looking at a device which is generating a slight skew over time. While our particular usage of Machine Learning will not look at the temperature but will treat the device anomaly as an outlier this could be extended to look at this aspect. 
 
 Note that the FailureCondition is a factor of the simulator only, and that actual failures of temperature readings is the ML input for later consumption.
+
+## Following on
+
+Continue onto building an Energy monitor and introduce the idea of a Cloud Gateway in [Lab2](../lab2-energy monitor/) or visualise the results of this lab in [Lab4](../lab4-visualisations/)
