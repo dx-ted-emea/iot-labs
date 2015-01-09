@@ -6,9 +6,19 @@ A Smart Home revolves around the idea that unattended sensors can report on ambi
 
 In order to implement this, it is possible to take consumer equipment and combine it in a good approximation of how commercial equipment may work. For instance, it is possible to use the **Arduino** consumer electronics boards and standardised components to measure temperature 
 
-### Architecture ###
+### Key Challenge 1 - Build a Sensor
 
-Here an overview of the Lab1; (Arduino->)Tessel->EventHub->BusinessLogic
+The first key challenge we face is to be able to interact and respond to our environment. Easily accessible and low cost consumer electronics can be built and programmed to provide insight into the ambient environment that surrounds us. Once we have the ability to detect temperature, we have reached our entry point to engaging with our environment and we can look to enrich, automate and improve our surroundings. 
+
+### Key Challenge 2 - Basic Scalable Ingestion 
+
+A successful device on consumer sale can be measured in the millions of shipped units. Each device is capable of 'calling home', reporting their state to remote services, many times a second. Even with a relatively small number of distributed systems, it becomes a challenge to reliably receive and process the weight of messaging that Machine to Machine (M2M) communication makes possible.
+
+In order to solve this challenge, Cloud Platform members such as the Azure Event Hub can be used to offer message receipt and onward delivery.
+
+Furthermore, simply receiving messages is insufficient to meet the challenges of at scale message processing. We instead need to be able to pass these messages onto a processing
+
+In a basic form, we can use Azure Stream Analytics to provide on the fly aggregations and averages of data points flowing through the system.
 
 # Building an Environment Sensor #
 
