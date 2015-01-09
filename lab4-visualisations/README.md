@@ -125,3 +125,14 @@ In order to build this, we will add an index.html page, and use a bootstrap grid
 
 ![](images/dashboard-contents.png)
 
+#### Approach to UI
+
+There are two main approaches to updating the UI. Both are powered by Javascript and JQuery. 
+
+The first approach is to use HighCharts to plot a chart; used by Temperature history and Energy Usage charts.
+
+The second approach is DOM manipulation, using JQuery to modify the loaded document's content. This is used to modify the innerText of the Current Temperature and heater status, and to modify visibility of some elements of a SVG used to display the heater pictograph.
+
+## Code for Visualisation
+
+The code for visualisation is in the ~/Scripts/iotlabs.js
