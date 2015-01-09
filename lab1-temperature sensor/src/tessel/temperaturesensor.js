@@ -10,14 +10,30 @@ if (wifi.isConnected())
   var led1 = tessel.led[0].output(1);
   var led2 = tessel.led[1].output(0);
 
-  setInterval(function () {
+  climate.on('ready', function () {
+    console.log('Connected to si7005');
 
-      var payload = { 'deviceid':'Device01','temperature':32.1,'timestamp':'2015-01-07T16:45:00' };
-      aehm.sendMessage(JSON.stringify(payload), 'Device01', config.eventhub_sas);
+    // Loop forever
+    setImmediate(function loop () {
+      climate.readTemperature('C', function (err, temp) {
+        climate.readHumidity(function (err, humid) {
 
-      led1.toggle();
-      led2.toggle();
-  }, 100);
+          var payload = { 'deviceid':'Device01','temperature':temp.toFixed(4),'timestamp':Date.toISOString() };
+          aehm.sendMessage(JSON.stringify(payload), 'Device01', config.eventhub_sas);
+
+          led1.toggle();
+          led2.toggle();
+
+          setTimeout(loop, 300);
+        });
+      });
+    });
+  });
+
+  climate.on('error', function(err) {
+    console.log('error connecting module', err);
+  });
+
 }
 else
 {
