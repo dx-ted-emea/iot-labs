@@ -8,4 +8,4 @@ Set of isolated labs for AzureML, Stream Analytics, HDI, Tessel, Arduino and Ras
 - [Lab3](lab3-device control/) deals with responding to state and commanding remote devices
 - [Lab4](lab4-visualisations/) deals with an overall visualisation of the system
 
-![](RioT-Labs-Atlas.png)
+![](RIoT-Labs-Atlas.png)
