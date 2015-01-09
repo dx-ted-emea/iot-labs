@@ -13,7 +13,7 @@ In order for different consumers to read from an event hub simultaneously we nee
 **Pre-requisites**
 
 - Azure PowerShell installed
-- A copy of Microsoft.ServiceBus.dll **TODO - best way to obtain this**
+- A copy of Microsoft.ServiceBus.dll - this can be gathered by using the nuget commandline interface
 
 **Add Consumer Group**
 
