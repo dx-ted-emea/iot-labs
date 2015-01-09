@@ -1,6 +1,9 @@
 var wifi = require('wifi-cc3000');
+var climatelib = require('climate-si7005');
 var tessel = require('tessel');
 var config = require('./config');
+
+var climate = climatelib.use(tessel.port['A']);
 
 var AzureEventHubManager = require("./AzureEventHubManager.js")
 var aehm = new AzureEventHubManager(config.eventhub_namespace, config.eventhub_hubname ,config.eventhub_keyname, config.eventhub_keyvalue)

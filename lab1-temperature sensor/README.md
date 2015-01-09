@@ -97,5 +97,80 @@ So far we have replicated the base function of the Tessel with the Climate modul
 
 ## Event Hubs and Azure ##
 
-[Here detail how to use Event Hub with nodejs/tessel] 
+Once we a working with the basic setup, we know that we can read temperatures and humidities. The next step is to pass this data across to the Azure Event Hub so that subsequent activities can be undertaken upon it. 
 
+This requires our tessel to be setup for [Wifi](http://start.tessel.io/wifi "WIFI") which is simple. If you are undertaking this hackathon in a location where the wifi is gated by a HTML based username and password portal, you may find it easier to tether your Tessel to a shared WIFI from your phone.
+
+```text
+tessel wifi -n [network name] -p [password] -s [security type*]
+```
+
+Once you are connected to the WIFI, you can create a Tessel project, a folder that contains:
+
+- TemperatureSensor.js which will hold our code
+- AzureEventHubManager.js which helps us connect to event hubs
+- config.js which contains connection information
+
+Once we have this code in place, and have modified the config.js to add our connection information, we need to install a dependency used by AzureEventHubManager; make sure you are in the same folder as temperaturesensor.js and enter:
+
+```text
+npm install moment
+```
+
+This will also create a packages.json file in the same folder as our runtime. This is especially useful as the presence of a packages.json helps the Tessel deployment code to package all relevant files; if we didn't have this file we could have entered a situation where not all the dependencies are packaged correctly.
+
+Now that this has been done, we can edit our temperatureSensor.js to add in the functionality for the Event Hub:
+
+```javascript
+var wifi = require('wifi-cc3000');
+var climatelib = require('climate-si7005');
+var tessel = require('tessel');
+var config = require('./config');
+
+var climate = climatelib.use(tessel.port['A']);
+
+var AzureEventHubManager = require("./AzureEventHubManager.js")
+var aehm = new AzureEventHubManager(config.eventhub_namespace, config.eventhub_hubname ,config.eventhub_keyname, config.eventhub_keyvalue)
+
+if (wifi.isConnected())
+{
+  var led1 = tessel.led[0].output(1);
+  var led2 = tessel.led[1].output(0);
+
+  climate.on('ready', function () {
+    console.log('Connected to si7005');
+
+    // Loop forever
+    setImmediate(function loop () {
+      climate.readTemperature('C', function (err, temp) {
+        climate.readHumidity(function (err, humid) {
+
+          var payload = { 'deviceid':'Device01','temperature':temp.toFixed(4),'timestamp':Date.toISOString() };
+          aehm.sendMessage(JSON.stringify(payload), 'Device01', config.eventhub_sas);
+
+          led1.toggle();
+          led2.toggle();
+
+          setTimeout(loop, 300);
+        });
+      });
+    });
+  });
+
+  climate.on('error', function(err) {
+    console.log('error connecting module', err);
+  });
+
+}
+else
+{
+  console.error('This lab requires a wifi connect. See http://start.tessel.io/wifi')
+}
+
+```
+
+### Following on 
+
+Once we have the data on the Azure Event Hub, we can being to process this using Azure Stream Analytics with the eventual goal of having it in a SQL data store for later use. 
+
+This is detailed in [Hot Path Analytics](hotpath.md)
