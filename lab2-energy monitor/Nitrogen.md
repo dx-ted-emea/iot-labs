@@ -8,8 +8,6 @@ Messaging also provides abstraction. Messages in Nitrogen follow well known sche
 
 In this example we will be making use of the MQTT bridge allows lower capability devices that can only send or recieve MQTT messages to participate in the Nitrogen ecosystem.
 
-## TODO: Add in more explantion about AzureEventHubManager.js try to break down what its doing ##
-
 ## Pre-requisites ##
 
 - create an account at [http://nitrogen.io](http://nitrogen.io)
@@ -17,7 +15,6 @@ In this example we will be making use of the MQTT bridge allows lower capability
 - Create an endpoint for port 1883 on the created VM
 
 **Event Hub**
--
 
 Event Hubs is a highly scalable publish-subscribe ingestor that can intake millions of events per second so that you can process and analyse the massive amounts of data produced by your connected devices and applications. Once collected into Event Hubs, you can transform and store data using any real-time analytics provider or with batching/storage adapters.  The Event Hub will recieve json enconded messages from he Gateway and will be used for both real-time processing via storm and batch based processing via HDInsight/Hadoop.
 
@@ -34,6 +31,7 @@ The following describes the steps to configure an Event Hub to which we can send
 ## Create the files ##
 
 - Create a new file `config.js` and set the contents as shown.  We will replace values later in the exercise.
+
 ```javascript
 	var Store = require('nitrogen-memory-store');
     
@@ -136,6 +134,7 @@ The following describes the steps to configure an Event Hub to which we can send
     
     module.exports = AzureEventHubManager
 ```
+
 - Create a new file `server.js` and set the contents as shown.  This will intercept any messages published by the client, validate a connection using the credentials provided and forward the message to a Azure Event Hub
 
 ```javascript
@@ -232,6 +231,7 @@ The following describes the steps to configure an Event Hub to which we can send
 ```
 
 - Create a new file `client.js` and set the contents as shown.  This will create a client connection to the server using credentials derived from `config.js` and push these to the server for processing.
+
 ```javascript
     var config = require('./config')
         , mqtt = require('mqtt');
@@ -278,7 +278,7 @@ Now we have the files we need, the server VM should be configured so it can run 
 
 - execute the following command to login to nitrogen (replace <email> as appropriate), enter the password to authenticate.
 
-    n2 principal login **<email>**
+    n2 principal login **email**
 
 - Execute the following command and copy the **KEY** (**API-KEY**)
 
@@ -286,11 +286,11 @@ Now we have the files we need, the server VM should be configured so it can run 
 
 - Execute the following command to create a new principal (user) who happens to be a device.  Copy the ID in the result.
 
-    n2 principal create --type device --name 'energyReader’ –apiKey ‘**<API_KEY>**’
+    n2 principal create --type device --name 'energyReader' --apiKey '**API_KEY**'
 
 - Execute command, copy the resulting **ACCESS TOKEN**
 
-    n2 principal accesstoken <id>
+    n2 principal accesstoken **id**
 
 - The ID and ACCESS TOKEN are used as credentials when authenticating to the server.  
 - Edit config.js
@@ -321,8 +321,8 @@ Now we have the files we need, the server VM should be configured so it can run 
 
 ## Setup Client ##
 
--**Currently this works locally, it will automatically generate messages in an infinite loop**
--**ASSUMES WINDOWS FOR now**
+- **Currently this works locally, it will automatically generate messages in an infinite loop**
+
 - Install node from [http://nodejs.org/download/](http://nodejs.org/download/)
 - Create a new directory 
 
