@@ -109,7 +109,17 @@ So far we have replicated the base function of the Tessel with the Climate modul
 
 Once we a working with the basic setup, we know that we can read temperatures and humidities. The next step is to pass this data across to the Azure Event Hub so that subsequent activities can be undertaken upon it. 
 
-This requires our tessel to be setup for [Wifi](http://start.tessel.io/wifi "WIFI") which is simple. If you are undertaking this hackathon in a location where the wifi is gated by a HTML based username and password portal, you may find it easier to tether your Tessel to a shared WIFI from your phone.
+The first thing you will need to do is to create an Azure Event Hub. The following describes the steps to configure an Event Hub to which we can send messages.
+
+1. Login to the Azure Portal
+2. Navigate to Service Bus and create a new instance
+3. Under Event Hubs, create a new instance
+4. Once complete navigate to Configure tab
+5. Create a new Shared Access Policy and set permissions to Manage, Send, Listen
+6. Save the updated configuration
+7. Copy the Policy Name and Primary Key after the Save has completed.  These details will be required to connect to the Event Hub.
+
+We will the require our tessel to be setup for [Wifi](http://start.tessel.io/wifi "WIFI") which is simple. If you are undertaking this hackathon in a location where the wifi is gated by a HTML based username and password portal, you may find it easier to tether your Tessel to a shared WIFI from your phone.
 
 ```text
 tessel wifi -n [network name] -p [password] -s [security type*]
@@ -121,7 +131,30 @@ Once you are connected to the WIFI, you can create a Tessel project, a folder th
 - AzureEventHubManager.js which helps us connect to event hubs
 - config.js which contains connection information
 
-Once we have this code in place, and have modified the config.js to add our connection information, we need to install a dependency used by AzureEventHubManager; make sure you are in the same folder as temperaturesensor.js and enter:
+Once we have this code in place, we need to modify config.js to add our connection information. You will need to enter the following parameters:
+
+- eventhub_namespace: the namespace of your Service Bus, e.g. iotlabs-ns
+- eventhub_hubname: the name of your Event Hub, e.g. tessel
+- eventhub_keyname: the name of your Shared Access Policy key, e.g. send
+- eventhub_keyvalue: the key corresponding to the Shared Access Policy
+- eventhub_sas: this last parameter will need to be generated as below.
+
+To generate the eventhub_sas parameter, you can use the following Node snippet, just run the `node` interpreter from the command line and type:
+
+```javascript
+var config = require('./config');
+var AzureEventHubManager = require("./AzureEventHubManager.js");
+var aehm = new AzureEventHubManager(config.eventhub_namespace, config.eventhub_hubname ,config.eventhub_keyname, config.eventhub_keyvalue);
+console.log(aehm.create_sas_token("https://tomiot.servicebus.windows.net/tessel/publishers/Device01/messages"));
+```
+
+This will print out a Shared Access Signature token, that you can then paste in your config.js file. It should something like this:
+
+```
+SharedAccessSignature sr=undefined&sig=v44AxxxxpwerxxxxSChOxxxxYYexxxxxBHDpxxxx6qg%3D&se=1421077451&skn=send
+```
+
+We will then need to install a dependency used by AzureEventHubManager; make sure you are in the same folder as temperaturesensor.js and enter:
 
 ```text
 npm install moment

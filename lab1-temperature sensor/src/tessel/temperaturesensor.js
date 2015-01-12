@@ -21,7 +21,8 @@ if (wifi.isConnected())
       climate.readTemperature('C', function (err, temp) {
         climate.readHumidity(function (err, humid) {
 
-          var payload = { 'deviceid':'Device01','temperature':temp.toFixed(4),'timestamp':Date.toISOString() };
+          var d = new Date();
+          var payload = { 'deviceid':'Device01','temperature':temp.toFixed(4),'timestamp':d.toISOString() };
           aehm.sendMessage(JSON.stringify(payload), 'Device01', config.eventhub_sas);
 
           led1.toggle();
