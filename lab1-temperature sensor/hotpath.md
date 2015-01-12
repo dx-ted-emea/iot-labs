@@ -15,7 +15,7 @@ CREATE TABLE dbo.avgdevicereadings
 (
 	starttime DATETIME not null,
 	endtime DATETIME not null,
-	deviceid VARCHAR not null,
+	deviceid VARCHAR(100) not null,
 	temperature FLOAT not null,
 	eventcount INT not null
 )
