@@ -82,6 +82,6 @@ Sqoop is a tool designed to transfer data between Hadoop clusters and relational
 - Navigate to C:\apps\dist\sqoop-1.4.4.2.1.9.0-2196\bin
 - Execute the following command (modify as appropriate)
 
-	`sqoop export --connect jdbc:sqlserver://<server>.database.windows.net:1433;database=testTedIotDb;user=<userame>@<server>;password=<password>;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30; --table averagesPerHour`
+	`sqoop export --connect "jdbc:sqlserver://<server>.database.windows.net:1433;database=<database>;user=<userame>@<server>;password=<password>;encrypt=true;Trusted_Connection=True;trustServerCertificate=true;Encrypt=True;loginTimeout=30;" --table averagesPerHour --export-dir /output --input-fields-terminated-by \0x09 -m 1`
 
 - Once complete data should be available in the database
