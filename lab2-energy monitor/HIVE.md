@@ -47,7 +47,7 @@ set hive.exec.dynamic.partition = true;
 set hive.exec.dynamic.partition.mode = nonstrict;
 
 CREATE EXTERNAL TABLE energyreadings (
-timestamp string, deviceId string, startReading int, endReading int, energyUsage int
+timestamp string, deviceId string, reading int
 )
 --PARTITIONED BY (year string, month string, day string)
 ROW FORMAT 
@@ -55,13 +55,13 @@ serde 'org.openx.data.jsonserde.JsonSerDe'
 STORED AS TEXTFILE
 LOCATION 'wasb://batchfiles@tomiot.blob.core.windows.net/2015/1/13';
 
-create external table averagesByHour (device string, hour string, average string) 
+create external table averagesByHour (deviceId string, hourOfDay string, average int) 
 row format delimited 
 fields terminated by '\t' 
 lines terminated by '\n' 
 stored as textfile location 'wasb:///output';
   
-insert into table  averagesByHour select deviceId, hour(from_unixtime(unix_timestamp(timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))), avg(energyUsage) from energyreadings where deviceId is not NULL group by hour(from_unixtime(unix_timestamp(timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))), deviceId ;
+insert into table averagesByHour select deviceId, hour(from_unixtime(unix_timestamp(timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))), avg(reading) from energyreadings where deviceId is not NULL group by hour(from_unixtime(unix_timestamp(timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))), deviceId ;
 ```
 
 - Monitor the job and once complete navigate the storage account and examine the file in the output folder.  This would be expected to contain values which we can write to a database.
@@ -82,6 +82,6 @@ Sqoop is a tool designed to transfer data between Hadoop clusters and relational
 - Navigate to C:\apps\dist\sqoop-1.4.4.2.1.9.0-2196\bin
 - Execute the following command (modify as appropriate)
 
-	`sqoop export --connect jdbc:sqlserver://<server>.database.windows.net:1433;database=testTedIotDb;user=<userame>@<server>;password=<password>;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30; --table averagesPerHour`
+	sqoop export --connect "jdbc:sqlserver://xxxx.database.windows.net:1433;database=iotlabs_db;user=tom@xxxx;password=password;encrypt=false;loginTimeout=30;" --table averagesPerHour --export-dir /output
 
 - Once complete data should be available in the database
