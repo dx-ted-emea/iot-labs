@@ -47,7 +47,7 @@ set hive.exec.dynamic.partition = true;
 set hive.exec.dynamic.partition.mode = nonstrict;
 
 CREATE EXTERNAL TABLE energyreadings (
-timestamp string, deviceId string, reading int
+timestamp string, deviceId string, startReading int, endReading int, energyUsage int
 )
 --PARTITIONED BY (year string, month string, day string)
 ROW FORMAT 
@@ -61,7 +61,7 @@ fields terminated by '\t'
 lines terminated by '\n' 
 stored as textfile location 'wasb:///output';
   
-insert into table averagesByHour select deviceId, hour(from_unixtime(unix_timestamp(timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))), avg(reading) from energyreadings where deviceId is not NULL group by hour(from_unixtime(unix_timestamp(timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))), deviceId ;
+insert into table averagesByHour select deviceId, hour(from_unixtime(unix_timestamp(timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))), avg(energyUsage) from energyreadings where deviceId is not NULL group by hour(from_unixtime(unix_timestamp(timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))), deviceId ;
 ```
 
 - Monitor the job and once complete navigate the storage account and examine the file in the output folder.  This would be expected to contain values which we can write to a database.
