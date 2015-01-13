@@ -69,6 +69,10 @@ namespace IotEventHubBatchingWorker
 
         private async Task RunAsync(CancellationToken cancellationToken)
         {
+            // make sure consumer group exists
+            NamespaceManager manager = NamespaceManager.CreateFromConnectionString(ConfigurationManager.AppSettings["ServiceBus.ConnectionString"] + ";TransportType=Amqp");
+            ConsumerGroupDescription description = new ConsumerGroupDescription(ConfigurationManager.AppSettings["ServiceBus.Path"], ConfigurationManager.AppSettings["ServiceBus.ConsumerGroup"]);
+            manager.CreateConsumerGroupIfNotExists(description);
 
             //get a handle on the consumer group for the event hub we want to read from
             var factory = MessagingFactory.CreateFromConnectionString(ConfigurationManager.AppSettings["ServiceBus.ConnectionString"] + ";TransportType=Amqp");
@@ -91,6 +95,8 @@ namespace IotEventHubBatchingWorker
 
                     var startTime = DateTime.UtcNow;
 
+                    Trace.TraceInformation("Waiting for messages " + receiver.PartitionId);
+
                     while (true)
                     {
                         try
@@ -112,7 +118,7 @@ namespace IotEventHubBatchingWorker
                             messageBuffer.Add(body);
 
                             //write out a file if a minute has passed and we have at least one message
-                            if ((currentTime - startTime).TotalMinutes >= 5 && messageBuffer.Count >= 1)
+                            if ((currentTime - startTime).TotalMinutes >= 1 && messageBuffer.Count >= 1)
                             {
                                 var now = DateTime.Now;
                                 var asString = String.Join("\n", messageBuffer);
