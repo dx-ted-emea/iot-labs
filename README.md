@@ -1,7 +1,7 @@
-msft-ted-iot
-============
+Microsoft Developer eXperience: IoT hands-on labs
+=================================================
 
-Set of isolated labs for AzureML, Stream Analytics, HDI, Tessel, Arduino and RaspberryPi
+Set of isolated labs for AzureML, Stream Analytics, HDInsight, Storm, based on Tessel, Arduino and Raspberry Pi devices.
 
 - [Lab1](lab1-temperature sensor/) deals with collecting and processing temperature readings 
 - [Lab2](lab2-energy monitor/) deals with collecting and processing energy readings at massive scale
