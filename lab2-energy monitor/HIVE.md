@@ -17,10 +17,7 @@ While this is currently a manual process, it can be automated using Oozie
 - Upload the jar to that location
 - Create a MS SQL instance in Azure, copy the JDBC connection string **(for simplicity avoid special characters in the password, ! character for instance causes problems when running the Sqoop job**)
 
-- Start the `IotEnergyBlob` worker role (it can run in the local Azure Compute Emulator)
- - In the app.config file, enter the information for your Event Hub (connection string, path, consumer group name)
- - Also enter the connection string for the Storage Account configured for the HDInsight cluster above, so that the worker role will write the log files where the cluster can access them
-- Once the worker role is running, it will read all events from Event Hub and save them to blob storage, in a container named `batchfiles` by default.
+- Start the `IotEnergyBlob` worker role (it can run in the local Azure Compute Emulator); read [Worker Role](WorkerRole.md) for full details on how to set it up.
 
 ###Create database table###
 
