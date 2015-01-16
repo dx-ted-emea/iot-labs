@@ -126,8 +126,8 @@ tessel wifi -n [network name] -p [password] -s [security type*]
 Once you are connected to the WIFI, you can create a Tessel project, a folder that contains:
 
 - `TemperatureSensor.js` which will hold our code
-- `AzureEventHubManager.js which helps us connect to event hubs
-- ``config.js` which contains connection information
+- `AzureEventHubManager.js` which helps us connect to event hubs
+- `config.js` which contains connection information
 
 Once we have this code in place, we need to modify config.js to add our connection information. You will need to enter the following parameters:
 
@@ -137,7 +137,7 @@ Once we have this code in place, we need to modify config.js to add our connecti
 - `eventhub_keyvalue`: the key corresponding to the Shared Access Policy
 - `eventhub_sas`: this last parameter will need to be generated as below.
 
-To generate the `eventhub_sas` parameter, you can run the included [generate_sas_token.js](src/generate_sas_token.js) script and specify the device identifier that will be sending messages.
+To generate the `eventhub_sas` parameter, you can run the included [generate_sas_token.js](src/tessel/generate_sas_token.js) script and specify the device identifier that will be sending messages.
 
 ```
 node generate_sas_token.js Device01
