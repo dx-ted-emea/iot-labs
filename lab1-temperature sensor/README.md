@@ -12,7 +12,7 @@ The first key challenge we face is to be able to interact and respond to our env
 
 ### Key Challenge 2 - Basic Scalable Ingestion 
 
-A successful device on consumer sale can be measured in the millions of shipped units. Each device is capable of 'calling home', reporting their state to remote services, many times a second. Even with a relatively small number of distributed systems, it becomes a challenge to reliably receive and process the weight of messaging that Machine to Machine (M2M) communication makes possible.
+A successful device on consumer sale can be measured in the millions of shipped units. Each device is capable of "calling home", reporting their state to remote services, many times a second. Even with a relatively small number of distributed systems, it becomes a challenge to reliably receive and process the weight of messaging that Machine to Machine (M2M) communication makes possible.
 
 In order to solve this challenge, Cloud Platform members such as the Azure Event Hub can be used to offer message receipt and onward delivery.
 
@@ -48,7 +48,6 @@ In this lab we will be using a Tessel, which allows the software developer to wr
 
 > There are many devices coming to market that are not listed here. Important factors for choosing are form factor; cost per unit; ease of development; cost to manufacture; ease of building custom boards based on identical software and required changes; ease of access to components especially with prefabricated modules (i.e. for Tessel). An interesting discussion is to rank these devices based on these criteria.
 
-
 ### External Environment Sensor ###
 
 This lab continues on with a basic approach to using the Tessel; using the available modules to determine the temperature using the [**Si7005**](http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7005.pdf) based [Climate module](https://tessel.io/docs/climate) for the Tessel. 
@@ -60,7 +59,6 @@ The design of the Tessel is modular and it is a simple way of adding capabilitie
 #### Discussion Point
 
 >This approach makes electrical engineering possible without needing to solder or build circuits yourself, but if you agree with the author that the joy of IoT is creativity, the expression of creativity is to make rather than consume, explore the lower level [Lab 1.1, Arduino](Lab1.1-Arduino.md) chaining. 
-
 
 # Writing a Tessel based Environment Sensor #
 
@@ -117,7 +115,7 @@ The first thing you will need to do is to create an Azure Event Hub. The followi
 4. Once complete navigate to Configure tab
 5. Create a new Shared Access Policy and set permissions to Manage, Send, Listen
 6. Save the updated configuration
-7. Copy the Policy Name and Primary Key after the Save has completed.  These details will be required to connect to the Event Hub.
+7. Copy the Policy Name and Primary Key after the Save has completed. These details will be required to connect to the Event Hub.
 
 We will the require our tessel to be setup for [Wifi](http://start.tessel.io/wifi "WIFI") which is simple. If you are undertaking this hackathon in a location where the wifi is gated by a HTML based username and password portal, you may find it easier to tether your Tessel to a shared WIFI from your phone.
 
@@ -127,31 +125,28 @@ tessel wifi -n [network name] -p [password] -s [security type*]
 
 Once you are connected to the WIFI, you can create a Tessel project, a folder that contains:
 
-- TemperatureSensor.js which will hold our code
-- AzureEventHubManager.js which helps us connect to event hubs
-- config.js which contains connection information
+- `TemperatureSensor.js` which will hold our code
+- `AzureEventHubManager.js which helps us connect to event hubs
+- ``config.js` which contains connection information
 
 Once we have this code in place, we need to modify config.js to add our connection information. You will need to enter the following parameters:
 
-- eventhub_namespace: the namespace of your Service Bus, e.g. iotlabs-ns
-- eventhub_hubname: the name of your Event Hub, e.g. tessel
-- eventhub_keyname: the name of your Shared Access Policy key, e.g. send
-- eventhub_keyvalue: the key corresponding to the Shared Access Policy
-- eventhub_sas: this last parameter will need to be generated as below.
+- `eventhub_namespace`: the namespace of your Service Bus, e.g. **iotlabs-ns**
+- `eventhub_hubname`: the name of your Event Hub, e.g. **tessel**
+- `eventhub_keyname`: the name of your Shared Access Policy key, e.g. **send**
+- `eventhub_keyvalue`: the key corresponding to the Shared Access Policy
+- `eventhub_sas`: this last parameter will need to be generated as below.
 
-To generate the eventhub_sas parameter, you can use the following Node snippet, just run the `node` interpreter from the command line and type:
-
-```javascript
-var config = require('./config');
-var AzureEventHubManager = require("./AzureEventHubManager.js");
-var aehm = new AzureEventHubManager(config.eventhub_namespace, config.eventhub_hubname ,config.eventhub_keyname, config.eventhub_keyvalue);
-console.log(aehm.create_sas_token("https://tomiot.servicebus.windows.net/tessel/publishers/Device01/messages"));
-```
-
-This will print out a Shared Access Signature token, that you can then paste in your config.js file. It should something like this:
+To generate the `eventhub_sas` parameter, you can run the included [generate_sas_token.js](src/generate_sas_token.js) script and specify the device identifier that will be sending messages.
 
 ```
-SharedAccessSignature sr=undefined&sig=v44AxxxxpwerxxxxSChOxxxxYYexxxxxBHDpxxxx6qg%3D&se=1421077451&skn=send
+node generate_sas_token.js Device01
+```
+
+This will print out a Shared Access Signature token, that you can then paste in your `config.js` file. This token is specific to the parameters you specified, including the device identifier, and it should look like this:
+
+```
+SharedAccessSignature sr=https%3A%2F%2Fiotlabs-ns.servicebus.windows.net%2Ftessel%2Fpublishers%2FDevice01%2Fmessages&sig=xxxx&se=1421420716&skn=send
 ```
 
 We will then need to install a dependency used by AzureEventHubManager; make sure you are in the same folder as temperaturesensor.js and enter:
@@ -160,9 +155,9 @@ We will then need to install a dependency used by AzureEventHubManager; make sur
 npm install moment
 ```
 
-This will also create a packages.json file in the same folder as our runtime. This is especially useful as the presence of a packages.json helps the Tessel deployment code to package all relevant files; if we didn't have this file we could have entered a situation where not all the dependencies are packaged correctly.
+This will also create a `packages.json` file in the same folder as our runtime. This is especially useful as the presence of a `packages.json` helps the Tessel deployment code to package all relevant files; if we didn't have this file we could have entered a situation where not all the dependencies are packaged correctly.
 
-Now that this has been done, we can edit our temperatureSensor.js to add in the functionality for the Event Hub:
+Now that this has been done, we can edit our `temperatureSensor.js` to add in the functionality for the Event Hub. Please note that when sending messages, we are using the same device identifier that we used before to generate the SAS (`Device01` in this example).
 
 ```javascript
 var wifi = require('wifi-cc3000');
