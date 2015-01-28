@@ -48,6 +48,8 @@ In this lab we will be using a Tessel, which allows the software developer to wr
 
 > There are many devices coming to market that are not listed here. Important factors for choosing are form factor; cost per unit; ease of development; cost to manufacture; ease of building custom boards based on identical software and required changes; ease of access to components especially with prefabricated modules (i.e. for Tessel). An interesting discussion is to rank these devices based on these criteria.
 
+As an alternative, we have some instructions on using an *Arduino Yun* device below.
+
 ### External Environment Sensor ###
 
 This lab continues on with a basic approach to using the Tessel; using the available modules to determine the temperature using the [**Si7005**](http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7005.pdf) based [Climate module](https://tessel.io/docs/climate) for the Tessel. 
@@ -212,3 +214,10 @@ else
 Once we have the data on the Azure Event Hub, we can being to process this using Azure Stream Analytics with the eventual goal of having it in a SQL data store for later use. 
 
 This is detailed in [Hot Path Analytics](hotpath.md)
+
+## Using an Arduino Yun ##
+
+As an alternative to using a Tessel device, we are providing below some basic instructions on how to use an Arduino Yun to send data to Azure Event Hubs.
+
+- [Getting started with the Arduino Yun](yun-getting-started.md)
+- [Sending data to Event Hubs from the Arduino Yun](yun-getting-started.md)
