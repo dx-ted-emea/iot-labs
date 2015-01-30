@@ -45,7 +45,7 @@
     var drawEnergyChart = function (readings) {
         var categories = new Array(readings.length);
         var series = new Array(1);
-        series[0] = { name: 'Device1', data: new Array(readings.length) };
+        series[0] = { name: 'DeviceId0', data: new Array(readings.length) };
         for (var i = 0; i < readings.length; i++) {
             categories[i] = readings[i].timestamp;
             series[0].data[i] = readings[i].endReading;
@@ -54,11 +54,11 @@
 
         $('#energyMonitorChart').highcharts({
             title: {
-                text: 'Last 100 Energy Readings',
+                text: 'Last 10 Energy Readings',
                 x: -20 //center
             },
             subtitle: {
-                text: 'Device1',
+            	text: 'DeviceId0',
                 x: -20
             },
             xAxis: {

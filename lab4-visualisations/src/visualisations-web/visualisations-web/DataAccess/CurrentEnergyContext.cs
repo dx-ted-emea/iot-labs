@@ -25,7 +25,10 @@ namespace visualisations_web.DataAccess
         public EnergyMonitorReading[] GetReadings(string deviceId)
         {
             var database = _connection.GetDatabase();
-            var values = database.ListRange("20141211" + deviceId);
+
+			DateTime dt = DateTime.Now;
+			String prefix = String.Format("{0:yyyyMMdd}", dt);
+			var values = database.ListRange(prefix + deviceId, -10, -1); // TODO: do not hard code prefix
 
             var readings = values.Select(t => JObject.Parse(t.ToString()).ToObject<EnergyMonitorReading>()).ToArray();
 
