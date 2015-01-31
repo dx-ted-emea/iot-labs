@@ -10,9 +10,9 @@ namespace visualisations_web.Models
     [Table("avgdevicereadings")]
     public class TemperatureReading
     {
-        [Column("readingId"), Key]
-        public int ReadingId { get; set; }
-        [Column("starttime")]
+		[Column("readingid"),Key]
+		public int ReadingId { get; set; }
+		[Column("starttime")]
         public DateTime StartTime { get; set; }
         [Column("endtime")]
         public DateTime EndTime { get; set; }

@@ -12,7 +12,7 @@ namespace visualisations_web.Hubs
 
         public void StartReadingPump()
         {
-            var deviceId = "DeviceId";
+            var deviceId = "device0";
             Groups.Add(Context.ConnectionId, deviceId);
 
             if (!runningTasks.ContainsKey(deviceId))

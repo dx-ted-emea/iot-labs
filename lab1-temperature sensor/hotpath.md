@@ -13,6 +13,7 @@ The following SQL can be used.
 ```sql
 CREATE TABLE dbo.avgdevicereadings
 (
+	readingid INT IDENTITY PRIMARY KEY,
 	starttime DATETIME not null,
 	endtime DATETIME not null,
 	deviceid VARCHAR(100) not null,

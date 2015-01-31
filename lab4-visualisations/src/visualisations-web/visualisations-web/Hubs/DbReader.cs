@@ -26,10 +26,18 @@ namespace visualisations_web.Hubs
             {
                 using (TemperatureReadingContext context = new TemperatureReadingContext(connectionString))
                 {
-                    var reading = context.Readings.Where(t => t.DeviceId == deviceId)
-                        .OrderByDescending(t => t.EndTime).First();
-
-                    _hubContext.Clients.Group(deviceId).pump(reading);
+					try
+					{
+						var reading = context.Readings.Where(t => t.DeviceId == deviceId)
+							.OrderByDescending(t => t.EndTime).First();
+						_hubContext.Clients.Group(deviceId).pump(reading);
+					}
+					catch (Exception ex)
+					{
+						System.Diagnostics.Trace.TraceError(ex.Message);
+						if (ex.InnerException != null)
+							System.Diagnostics.Trace.TraceError(ex.InnerException.Message);
+					}
                 }
 
                 await Task.Delay(1000);

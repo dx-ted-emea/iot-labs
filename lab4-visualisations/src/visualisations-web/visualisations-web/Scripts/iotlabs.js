@@ -6,9 +6,10 @@
 
     var energyMonitoringProxy = $.connection.energyMonitorHub;
     energyMonitoringProxy.client.pump = function (readings) {
-        console.log(readings);
+        //console.log(readings);
         drawEnergyChart(readings);
     };
+
     var temperatureProxy = $.connection.temperatureHub;
     temperatureProxy.client.pump = function (reading) {
         console.log(reading);
@@ -50,7 +51,7 @@
             categories[i] = readings[i].timestamp;
             series[0].data[i] = readings[i].endReading;
         }
-        console.log(series[0].data);
+        //console.log(series[0].data);
 
         $('#energyMonitorChart').highcharts({
             title: {
@@ -97,7 +98,8 @@
 
     var updateTemperature = function (temperatureReading)
     {
-        $("#currentTemperature").text(temperatureReading.Temperature);
+    	console.log("temp: " + temperatureReading);
+        $("#currentTemperature").text(temperatureReading.Temperature.toPrecision(4));
         $("#temperatureUpdated").text(moment(temperatureReading.EndTime).fromNow())
     }
 
