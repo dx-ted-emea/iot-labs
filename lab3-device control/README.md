@@ -24,7 +24,7 @@ Here an overview of the Lab3; BusinessLogic->EventHub->Pi->Arduino
 
 The purpose of the Field Gateway is to lift up resource constrained devices and expose their function over higher requirement systems such as a network. In this example, the Field Gateway will be provided by a Raspberry PI with an Arduino Uno providing the constrained device role. The connectivity to the Arduino couldn't be simpler Electronically; use the USB on the Arduino to connect to the PI.
 
-![](pi-to-arduino.png)
+![](images/pi-to-arduino.png)
 
 ## Controllable Device Contract ##
 
@@ -136,6 +136,15 @@ Note that we can swap Python for another language and swap the Raspberry Pi for 
 
 If you chose to deploy onto a Microsoft Windows based Field Gateway (PC or Tablet) you gain the additional option of using the native Azure ServiceBus SDK, which doesn't use AMQP but a proprietary standard. 
 
+### Configuring Service Bus Topics ###
+
+The Azure Service Bus service we will use to communicate between the Field Gateway and the Cloud Service is called Topics. We will use one Topic for each messaging direction, i.e. one Topic will be used by the Field Gateway to send information to our Cloud Service, and the other one for the Cloud Service to send commands to the Field Gateway.
+
+In order to create these two topics, under your Service Bus namespace, go to the Topics tab, and click on "Create new Topic". Select "Quick Create" and enter the two topic names below. Make sure you create them in the same region as the rest of the infrastructure!
+
+- `fieldgatewaytobusinessrules`
+- `businessrulestofieldgateway`
+
 ### Implementing a Field Gateway ###
 
 The Field Gateway utilises demjson for serialization, providing a better tolerance for json strings in non-standard delimits and qpid proton for messaging.
@@ -238,7 +247,6 @@ while True:
       mng.accept()
 
 mng.stop()
-
 
 ```
 
@@ -376,3 +384,7 @@ namespace businessrules
 }
 
 ```
+
+### Testing using the Field Gateway Simulator ###
+
+The Visual Studio source code includes a Field Gateway Simulator project that you can use to simulate the gateway from your workstation.
