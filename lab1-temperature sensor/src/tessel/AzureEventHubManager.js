@@ -1,6 +1,5 @@
 var https = require('https');
 var crypto = require('crypto');
-var moment = require('moment')
 
 var namespace = null;
 var hubname = null;
@@ -19,8 +18,8 @@ function AzureEventHubManager(namespace, hubname, keyname, keyvalue)
 AzureEventHubManager.prototype = {
     create_sas_token: function(uri)
     {
-        // Token expires in one hour
-        var expiry = moment().add(1, 'hours').unix();
+        // Token expires in 24 hours
+        var expiry = Math.floor(new Date().getTime()/1000+3600*24);
 
         var string_to_sign = encodeURIComponent(uri) + '\n' + expiry;
         var hmac = crypto.createHmac('sha256', this.keyvalue);
