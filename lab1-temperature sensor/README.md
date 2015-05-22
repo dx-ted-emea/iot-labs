@@ -131,6 +131,8 @@ Once you are connected to the WIFI, you can create a Tessel project, a folder th
 - `AzureEventHubManager.js` which helps us connect to event hubs
 - `config.js` which contains connection information
 
+You can find these source files in the `src/tessel` folder in this repository.
+
 Once we have this code in place, we need to modify config.js to add our connection information. You will need to enter the following parameters:
 
 - `eventhub_namespace`: the namespace of your Service Bus, e.g. **iotlabs-ns**
@@ -150,14 +152,6 @@ This will print out a Shared Access Signature token, that you can then paste in 
 ```
 SharedAccessSignature sr=https%3A%2F%2Fiotlabs-ns.servicebus.windows.net%2Ftessel%2Fpublishers%2FDevice01%2Fmessages&sig=xxxx&se=1421420716&skn=send
 ```
-
-We will then need to install a dependency used by AzureEventHubManager; make sure you are in the same folder as temperaturesensor.js and enter:
-
-```text
-npm install moment
-```
-
-This will also create a `packages.json` file in the same folder as our runtime. This is especially useful as the presence of a `packages.json` helps the Tessel deployment code to package all relevant files; if we didn't have this file we could have entered a situation where not all the dependencies are packaged correctly.
 
 Now that this has been done, we can edit our `temperatureSensor.js` to add in the functionality for the Event Hub. Please note that when sending messages, we are using the same device identifier that we used before to generate the SAS (`Device01` in this example).
 
