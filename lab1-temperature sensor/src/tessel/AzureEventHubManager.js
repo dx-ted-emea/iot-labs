@@ -39,7 +39,7 @@ AzureEventHubManager.prototype = {
             headers: {
                 'Authorization': sas,
                 'Content-Length': payload.length,
-                'Content-Type': 'application/atom+xml;type=entry;charset=utf-8'
+                'Content-Type': 'application/json;type=entry;charset=utf-8'
             }
         };
     },

@@ -1,11 +1,14 @@
 {
-  "name": "ElastacloudIoT",
-  "version": "1.0.0",
-  "description": "Microsoft IoT Hackathon Labs",
+  "name": "Lab1",
+  "version": "1.0.1",
+  "description": "Microsoft IoT Hackathon Lab 1",
   "main": "AzureEventHubManager.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Andy Cross",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "climate-si7020": "^0.1.1"
+  }
 }

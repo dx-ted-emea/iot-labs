@@ -1,5 +1,5 @@
 var wifi = require('wifi-cc3000');
-var climatelib = require('climate-si7005');
+var climatelib = require('climate-si7020');
 var tessel = require('tessel');
 var config = require('./config');
 
@@ -14,7 +14,7 @@ if (wifi.isConnected())
   var led2 = tessel.led[1].output(0);
 
   climate.on('ready', function () {
-    console.log('Connected to si7005');
+    console.log('Connected to si7020');
 
     // Loop forever
     setImmediate(function loop () {
