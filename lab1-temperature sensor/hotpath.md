@@ -1,6 +1,6 @@
 ## Building a hot path analytics streaming capture facility ##
 
-We'll be looking at simple pattern of Event Hub -> Streaming Analytics ->  SQLDB -> AzureML in this lab. 
+We'll be looking at simple pattern of Event Hub -> Azure Stream Analytics ->  SQLDB -> AzureML in this lab. 
 
 The purpose is to be able to aggregate device readings over a 60 second window from event hub messages direct from the device or a gateway of some type. In order to begin we'll be creating a Windows Azure SQL Database called "temperaturedb" which will contain the aggregated values over a 60 period grouped by the device id.
 
